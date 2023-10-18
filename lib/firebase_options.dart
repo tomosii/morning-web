@@ -53,11 +53,11 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBfs2wYNIMHYQAvVRAFVK4_keaD29dHHk4',
-    appId: '1:477712120619:web:898e1d4002f8989531636e',
-    messagingSenderId: '477712120619',
-    projectId: 'weblab-morning-activity',
-    authDomain: 'weblab-morning-activity.firebaseapp.com',
-    storageBucket: 'weblab-morning-activity.appspot.com',
+    apiKey: 'AIzaSyAd1Rs6jECeXH3P1j3lq6Lykhpl7S2Slrk',
+    appId: '1:170345992655:web:66062331a750df5047c2ba',
+    messagingSenderId: '170345992655',
+    projectId: 'weblab-morning',
+    authDomain: 'weblab-morning.firebaseapp.com',
+    storageBucket: 'weblab-morning.appspot.com',
   );
 }
