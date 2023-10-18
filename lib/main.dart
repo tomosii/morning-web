@@ -87,7 +87,7 @@ class MorningApp extends StatelessWidget {
                     } else if (snap.hasError) {
                       return Text("Error: ${snap.error}");
                     } else {
-                      return const Text("Loading...");
+                      return Container();
                     }
                   },
                 ),
