@@ -77,9 +77,10 @@ class MorningApp extends StatelessWidget {
                           Text(
                             "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}",
                             style: GoogleFonts.inter(
-                              fontSize: 35,
+                              fontSize: 34,
                               fontWeight: FontWeight.w700,
-                              color: Colors.black.withOpacity(0.9),
+                              color: Colors.black.withOpacity(0.8),
+                              letterSpacing: 1.1,
                             ),
                           ),
                         ],
@@ -128,7 +129,7 @@ class MorningApp extends StatelessWidget {
                               child: Text(
                                 "指定のネットワークに接続されています",
                                 style: TextStyle(
-                                  fontSize: 13,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.w500,
                                   color: Colors.black.withOpacity(0.65),
                                 ),
@@ -152,7 +153,7 @@ class MorningApp extends StatelessWidget {
                               child: Text(
                                 "チェックインエリア圏内です",
                                 style: TextStyle(
-                                  fontSize: 13,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.w500,
                                   color: Colors.black.withOpacity(0.65),
                                 ),
