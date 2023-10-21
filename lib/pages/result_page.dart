@@ -54,7 +54,7 @@ class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
           child: Column(
             children: [
               const SizedBox(
-                height: 40,
+                height: 20,
               ),
               Container(
                 alignment: Alignment.centerRight,
@@ -80,7 +80,7 @@ class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
                 color: morningBlue,
               ),
               const SizedBox(
-                height: 7,
+                height: 5,
               ),
               Text(
                 "Studio",
@@ -91,18 +91,18 @@ class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
                 ),
               ),
               const SizedBox(
-                height: 17,
+                height: 15,
               ),
               const Text(
                 "-1時間7分",
                 style: TextStyle(
-                  fontSize: 22,
+                  fontSize: 20,
                   fontWeight: FontWeight.w800,
                   color: morningBlue,
                 ),
               ),
               const SizedBox(
-                height: 120,
+                height: 100,
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -22,7 +22,6 @@ class _HomePageState extends ConsumerState<HomePage>
   double _headerOpacity = 0;
   double _statusOpacity = 0;
   double _buttonOpacity = 0;
-  double _buttonRippleOpacity = 1;
 
   bool _checkInLoading = false;
 
@@ -36,19 +35,19 @@ class _HomePageState extends ConsumerState<HomePage>
       vsync: this,
     )..repeat();
 
-    Future.delayed(const Duration(milliseconds: 100), () {
+    Future.delayed(const Duration(milliseconds: 200), () {
       setState(() {
         _headerOpacity = 1;
       });
     });
 
-    Future.delayed(const Duration(milliseconds: 700), () {
+    Future.delayed(const Duration(milliseconds: 900), () {
       setState(() {
         _statusOpacity = 1;
       });
     });
 
-    Future.delayed(const Duration(milliseconds: 1200), () {
+    Future.delayed(const Duration(milliseconds: 1500), () {
       setState(() {
         _buttonOpacity = 1;
       });
@@ -75,6 +74,7 @@ class _HomePageState extends ConsumerState<HomePage>
             horizontal: 28,
           ),
           child: SingleChildScrollView(
+            clipBehavior: Clip.none,
             padding: EdgeInsets.zero,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,7 +109,7 @@ class _HomePageState extends ConsumerState<HomePage>
 
   Widget _logo() {
     return AnimatedOpacity(
-      duration: const Duration(milliseconds: 900),
+      duration: const Duration(milliseconds: 1000),
       opacity: _headerOpacity,
       child: Image.asset(
         'assets/images/morning-logo.png',
@@ -120,7 +120,7 @@ class _HomePageState extends ConsumerState<HomePage>
 
   Widget _currentDateAndTime() {
     return AnimatedOpacity(
-      duration: const Duration(milliseconds: 900),
+      duration: const Duration(milliseconds: 1000),
       opacity: _headerOpacity,
       child: StreamBuilder<DateTime>(
         stream: Stream.periodic(
@@ -148,7 +148,7 @@ class _HomePageState extends ConsumerState<HomePage>
                   style: GoogleFonts.inter(
                     fontSize: 34,
                     fontWeight: FontWeight.w700,
-                    color: Colors.black.withOpacity(0.75),
+                    color: Colors.black.withOpacity(0.7),
                   ),
                 ),
               ],
@@ -165,7 +165,7 @@ class _HomePageState extends ConsumerState<HomePage>
 
   Widget _statusPanel() {
     return AnimatedOpacity(
-      duration: const Duration(milliseconds: 900),
+      duration: const Duration(milliseconds: 1000),
       opacity: _statusOpacity,
       child: Center(
         child: Container(
@@ -296,13 +296,13 @@ class _HomePageState extends ConsumerState<HomePage>
 
   Widget _showCheckInButton() {
     return AnimatedOpacity(
-      duration: const Duration(milliseconds: 900),
+      duration: const Duration(milliseconds: 1200),
       opacity: _buttonOpacity,
       child: Stack(
         children: [
           Positioned.fill(
             child: AnimatedOpacity(
-              duration: const Duration(milliseconds: 2000),
+              duration: const Duration(milliseconds: 2500),
               opacity: ref.watch(buttonRippleOpacityProvider),
               child: CustomPaint(
                 painter: CircleRipplePainter(
@@ -353,22 +353,21 @@ class _HomePageState extends ConsumerState<HomePage>
             padding: const EdgeInsets.all(0),
           ),
           onPressed: () async {
+            if (!enabled) {
+              return;
+            }
+
             setState(() {
               _checkInLoading = true;
             });
-
             await Future.delayed(const Duration(milliseconds: 1000));
-
-            if (enabled) {
-              Navigator.pushNamed(context, "/result");
-            }
-
+            Navigator.pushNamed(context, "/result");
             setState(() {
               _checkInLoading = false;
             });
           },
           child: _checkInLoading
-              ? Container(
+              ? SizedBox(
                   width: 30,
                   height: 30,
                   child: const CircularProgressIndicator(
@@ -387,56 +386,60 @@ class _HomePageState extends ConsumerState<HomePage>
   }
 
   Widget _debugInfo() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        FutureBuilder<String>(
-          future: getIPAddress(),
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            if (snapshot.hasData) {
-              return Text(
-                snapshot.data!,
-                style: TextStyle(
-                  fontSize: 9,
-                  color: Colors.black.withOpacity(0.3),
-                ),
-              );
-            } else if (snapshot.hasError) {
-              return Text(
-                snapshot.error.toString(),
-                style: TextStyle(
-                  fontSize: 9,
-                  color: Colors.black.withOpacity(0.3),
-                ),
-              );
-            }
-            return Container();
-          },
-        ),
-        FutureBuilder<Position>(
-          future: getCurrentPosition(),
-          builder: (BuildContext context, AsyncSnapshot<Position> snapshot) {
-            if (snapshot.hasData) {
-              return Text(
-                "${snapshot.data!.latitude}, ${snapshot.data!.longitude}",
-                style: TextStyle(
-                  fontSize: 9,
-                  color: Colors.black.withOpacity(0.3),
-                ),
-              );
-            } else if (snapshot.hasError) {
-              return Text(
-                snapshot.error.toString(),
-                style: TextStyle(
-                  fontSize: 9,
-                  color: Colors.black.withOpacity(0.3),
-                ),
-              );
-            }
-            return Container();
-          },
-        ),
-      ],
+    return AnimatedOpacity(
+      duration: const Duration(milliseconds: 1000),
+      opacity: _buttonOpacity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          FutureBuilder<String>(
+            future: getIPAddress(),
+            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+              if (snapshot.hasData) {
+                return Text(
+                  snapshot.data!,
+                  style: TextStyle(
+                    fontSize: 9,
+                    color: Colors.black.withOpacity(0.3),
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return Text(
+                  snapshot.error.toString(),
+                  style: TextStyle(
+                    fontSize: 9,
+                    color: Colors.black.withOpacity(0.3),
+                  ),
+                );
+              }
+              return Container();
+            },
+          ),
+          FutureBuilder<Position>(
+            future: getCurrentPosition(),
+            builder: (BuildContext context, AsyncSnapshot<Position> snapshot) {
+              if (snapshot.hasData) {
+                return Text(
+                  "${snapshot.data!.latitude}, ${snapshot.data!.longitude}",
+                  style: TextStyle(
+                    fontSize: 9,
+                    color: Colors.black.withOpacity(0.3),
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return Text(
+                  snapshot.error.toString(),
+                  style: TextStyle(
+                    fontSize: 9,
+                    color: Colors.black.withOpacity(0.3),
+                  ),
+                );
+              }
+              return Container();
+            },
+          ),
+        ],
+      ),
     );
   }
 }

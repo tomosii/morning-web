@@ -26,7 +26,7 @@ class MorningErrorDialog extends StatelessWidget {
           maxWidth: 500,
         ),
         padding: const EdgeInsets.only(
-          left: 20,
+          left: 27,
           right: 20,
           top: 25,
           bottom: 30,
@@ -37,13 +37,13 @@ class MorningErrorDialog extends StatelessWidget {
           children: [
             Row(
               children: [
-                Lottie.asset(
-                  "assets/lottie/error_alert.json",
-                  width: 36,
-                ),
-                const SizedBox(
-                  width: 5,
-                ),
+                // Lottie.asset(
+                //   "assets/lottie/error_alert.json",
+                //   width: 36,
+                // ),
+                // const SizedBox(
+                //   width: 5,
+                // ),
                 Text(
                   title,
                   style: TextStyle(
@@ -59,7 +59,7 @@ class MorningErrorDialog extends StatelessWidget {
               height: 8,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 7),
+              padding: const EdgeInsets.only(left: 0),
               child: Text(
                 message,
                 textAlign: TextAlign.left,

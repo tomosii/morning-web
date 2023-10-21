@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../constants/colors.dart';
 
-class SimpleTextForm extends StatelessWidget {
+class SimpleTextForm extends StatefulWidget {
   const SimpleTextForm({
     Key? key,
     required this.hintText,
@@ -23,6 +23,13 @@ class SimpleTextForm extends StatelessWidget {
   final void Function(String)? onChanged;
 
   @override
+  State<SimpleTextForm> createState() => _SimpleTextFormState();
+}
+
+class _SimpleTextFormState extends State<SimpleTextForm> {
+  static final _formKey = GlobalKey<FormState>();
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       height: 60,
@@ -34,7 +41,7 @@ class SimpleTextForm extends StatelessWidget {
           BoxShadow(
             color: Colors.blueGrey.withOpacity(0.1),
             spreadRadius: 2,
-            blurRadius: 14,
+            blurRadius: 18,
             offset: const Offset(0, 2),
           ),
         ],
@@ -46,25 +53,29 @@ class SimpleTextForm extends StatelessWidget {
       child: Align(
         alignment: Alignment.center,
         child: TextField(
+          key: _formKey,
           autocorrect: false,
-          autofillHints: (autofillHint != null) ? [autofillHint!] : null,
-          controller: controller,
-          onChanged: onChanged,
+          autofillHints:
+              (widget.autofillHint != null) ? [widget.autofillHint!] : null,
+          controller: widget.controller,
+          onChanged: widget.onChanged,
           cursorHeight: 23,
           cursorColor: morningBlue,
           enableInteractiveSelection: false,
-          obscureText: password,
-          textInputAction: done ? TextInputAction.done : TextInputAction.next,
-          onEditingComplete: () => done ? node.unfocus() : node.nextFocus(),
+          obscureText: widget.password,
+          textInputAction:
+              widget.done ? TextInputAction.done : TextInputAction.next,
+          onEditingComplete: () =>
+              widget.done ? widget.node.unfocus() : widget.node.nextFocus(),
           style: TextStyle(
             color: Colors.grey[800],
             fontWeight: FontWeight.w500,
             fontSize: 15,
           ),
           decoration: InputDecoration(
-            hintText: hintText,
+            hintText: widget.hintText,
             hintStyle: TextStyle(
-              color: Colors.grey[500],
+              color: Colors.black.withOpacity(0.3),
               fontWeight: FontWeight.w500,
               fontSize: 13,
             ),

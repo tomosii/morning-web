@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:morning_web/pages/home_page.dart';
+import 'package:morning_web/repository/firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/place.dart';
 import '../verification/checkin_verification.dart';
@@ -9,8 +11,20 @@ import '../verification/condition_status.dart';
 final userEmailProvider = StateProvider<String?>((ref) => null);
 final userNameProvider = StateProvider<String?>((ref) => null);
 
-// final networkStatusProvider =
-//     FutureProvider<NetworkStatus>((ref) => getNetworkStatus());
+final localEmailProvider = FutureProvider<String?>((ref) async {
+  final prefs = await SharedPreferences.getInstance();
+  String? email = prefs.getString("email");
+  print("Email in local storage: $email");
+
+  if (email != null) {
+    fetchUserInfo(email, ref);
+
+    // SharedPreferenceに上書き
+    await prefs.setString("email", email);
+  }
+
+  return email;
+});
 
 final checkInPlacesProvider = FutureProvider<List<CheckInPlace>>((ref) async {
   final db = FirebaseFirestore.instance;

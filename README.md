@@ -1,3 +1,27 @@
 # morning_web
 
-A new Flutter project.
+## Run
+
+Development:
+```
+fvm flutter run
+```
+
+Release:
+```
+fvm flutter run --web-renderer canvaskit --release
+```
+
+## Build
+
+```
+fvm flutter build web --web-renderer canvaskit --release
+```
+
+## Deploy
+
+```
+firebase deploy
+```
+
+

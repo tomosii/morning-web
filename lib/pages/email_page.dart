@@ -17,16 +17,18 @@ class EmailPage extends ConsumerStatefulWidget {
 }
 
 class _EmailPageState extends ConsumerState<EmailPage> {
-  late FocusScopeNode node; // カーソル移動用
-
   final _emailTextController = TextEditingController(text: "");
 
   bool _loading = false;
 
   @override
-  Widget build(BuildContext context) {
-    node = FocusScope.of(context);
+  void dispose() {
+    _emailTextController.dispose();
+    super.dispose();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: GestureDetector(
@@ -36,17 +38,20 @@ class _EmailPageState extends ConsumerState<EmailPage> {
             constraints: const BoxConstraints(
               maxWidth: 500,
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _logo(),
-                const SizedBox(
-                  height: 80,
-                ),
-                _forms(context),
-              ],
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: SingleChildScrollView(
+              clipBehavior: Clip.none,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _logo(),
+                  const SizedBox(
+                    height: 80,
+                  ),
+                  _forms(context),
+                ],
+              ),
             ),
           ),
         ),
@@ -68,17 +73,18 @@ class _EmailPageState extends ConsumerState<EmailPage> {
           SimpleTextForm(
             hintText: "Weblabドメインのメールアドレス",
             controller: _emailTextController,
-            node: node,
+            node: FocusScope.of(context),
             autofillHint: AutofillHints.email,
             done: true,
           ),
           const SizedBox(
-            height: 70,
+            height: 100,
           ),
           PrimaryButton(
             icon: Icons.arrow_forward_rounded,
             width: 120,
             onTap: () {
+              FocusScope.of(context).unfocus();
               _validateEmail();
             },
             loading: _loading,
@@ -110,8 +116,8 @@ class _EmailPageState extends ConsumerState<EmailPage> {
         context: context,
         builder: (_) {
           return MorningErrorDialog(
-            title: "無効なメールアドレスです",
-            message: "メールアドレスが間違っているか、登録されていません。\n未登録の場合は、管理者に連絡してください。",
+            title: "未登録のメールアドレスです",
+            message: "メールアドレスが間違っているか、登録されていません。\n未登録の場合は管理者に連絡してください。",
           );
         },
       );
@@ -127,6 +133,8 @@ class _EmailPageState extends ConsumerState<EmailPage> {
 
   Future<bool> findUser(String email) async {
     final db = FirebaseFirestore.instance;
+
+    // 該当のメールアドレスを持つユーザーが存在するか確認
     final snapshot = await db.collection("user").doc(email).get();
 
     if (snapshot.exists) {
