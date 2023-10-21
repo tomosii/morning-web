@@ -8,6 +8,7 @@ environment:
 
 dependencies:
   cloud_firestore: ^4.11.0
+  confetti: ^0.7.0
   firebase_core: ^2.18.0
   flutter:
     sdk: flutter
@@ -51,3 +52,4 @@ flutter:
   assets:
     - assets/images/
     - assets/lottie/
+    - assets/google_fonts/

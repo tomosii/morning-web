@@ -43,40 +43,42 @@ class _HomePageState extends ConsumerState<HomePage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Container(
-        alignment: Alignment.topCenter,
-        constraints: const BoxConstraints(
-          maxWidth: 400,
-        ),
-        padding: const EdgeInsets.symmetric(
-          horizontal: 28,
-        ),
-        child: SingleChildScrollView(
-          padding: EdgeInsets.zero,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(
-                height: 20,
-              ),
-              _logo(),
-              const SizedBox(
-                height: 20,
-              ),
-              _currentDateAndTime(),
-              const SizedBox(
-                height: 40,
-              ),
-              _statusPanel(),
-              const SizedBox(
-                height: 100,
-              ),
-              _showCheckInButton(),
-              const SizedBox(
-                height: 100,
-              ),
-              _debugInfo(),
-            ],
+      body: Center(
+        child: Container(
+          alignment: Alignment.topCenter,
+          constraints: const BoxConstraints(
+            maxWidth: 400,
+          ),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 28,
+          ),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.zero,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 20,
+                ),
+                _logo(),
+                const SizedBox(
+                  height: 20,
+                ),
+                _currentDateAndTime(),
+                const SizedBox(
+                  height: 40,
+                ),
+                _statusPanel(),
+                const SizedBox(
+                  height: 100,
+                ),
+                _showCheckInButton(),
+                const SizedBox(
+                  height: 100,
+                ),
+                _debugInfo(),
+              ],
+            ),
           ),
         ),
       ),
@@ -92,8 +94,8 @@ class _HomePageState extends ConsumerState<HomePage>
 
   Widget _currentDateAndTime() {
     return StreamBuilder<DateTime>(
-      stream:
-          Stream.periodic(const Duration(seconds: 1), (_) => DateTime.now()),
+      stream: Stream.periodic(
+          const Duration(milliseconds: 100), (_) => DateTime.now()),
       builder: (BuildContext context, AsyncSnapshot<DateTime> snap) {
         if (snap.hasData) {
           final DateTime now = snap.data!;
