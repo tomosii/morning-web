@@ -10,14 +10,14 @@ import 'package:morning_web/verification/condition_status.dart';
 import '../../constants/colors.dart';
 import '../components/ripple_animation.dart';
 
-class HomePage extends ConsumerStatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class CheckInResultPage extends ConsumerStatefulWidget {
+  const CheckInResultPage({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<HomePage> createState() => _HomePageState();
+  ConsumerState<CheckInResultPage> createState() => _CheckInResultPageState();
 }
 
-class _HomePageState extends ConsumerState<HomePage>
+class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
     with TickerProviderStateMixin {
   double _titleOpacity = 0;
   double _formOpacity = 0;
