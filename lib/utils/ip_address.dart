@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-Future<String> _getIPAddress() async {
+Future<String> getIPAddress() async {
   final response =
       await http.get(Uri.parse('https://api.ipify.org?format=json'));
   if (response.statusCode == 200) {

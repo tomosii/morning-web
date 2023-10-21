@@ -1,50 +1,69 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:math';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:morning_web/models/place.dart';
+import 'package:morning_web/utils/ip_address.dart';
 
 import '../utils/location.dart';
 import 'condition_status.dart';
 
-Future<LocationStatus> checkLocationStatus() async {
-  final currentPosition = await getCurrentPosition();
+Future<NetworkStatus> checkNetworkStatus(
+  Ref ref,
+  List<CheckInPlace> checkInPlaces,
+) async {
+  final myIPAdress = await getIPAddress();
+
+  print("現在のIPアドレス: $myIPAdress");
+
+  // チェックイン場所のIPアドレスと比較
+  for (final place in checkInPlaces) {
+    if (myIPAdress.contains(place.ipAddress)) {
+      print("一致したIPアドレス: ${place.ipAddress}");
+      return NetworkStatus.valid;
+    }
+  }
+
+  return NetworkStatus.invalid;
+}
+
+Future<LocationStatus> checkLocationStatus(
+  Ref ref,
+  List<CheckInPlace> checkInplaces,
+) async {
+  Position currentPosition;
+  try {
+    currentPosition = await getCurrentPosition();
+  } catch (e) {
+    return LocationStatus.notAvailable;
+  }
+
   if (currentPosition.isMocked) {
     // モック位置情報の場合
     return LocationStatus.mocking;
   }
 
-  final goalPositions = await getCheckInPositions();
-
-  final distanceFromGoal = goalPositions.map((e) {
+  // 現在地から各場所までの距離を計算
+  final distanceFromGoal = checkInplaces.map((place) {
     final distance = Geolocator.distanceBetween(
       currentPosition.latitude,
       currentPosition.longitude,
-      e.latitude,
-      e.longitude,
+      place.latLng.latitude,
+      place.latLng.longitude,
     );
     return distance;
   }).toList();
 
-  final minDistance = distanceFromGoal.reduce((value, element) {
-    return value < element ? value : element;
-  });
+  print("現在地からの距離: $distanceFromGoal");
+
+  // 最短距離を取得
+  final minDistance = distanceFromGoal.reduce(min);
+
+  print("最短距離: $minDistance");
 
   if (minDistance > 30) {
     return LocationStatus.outOfRange;
   } else {
     return LocationStatus.withinRange;
   }
-}
-
-// Future<NetworkStatus> checkNetworkStatus() async {
-
-// }
-
-Future<List<GeoPoint>> getCheckInPositions() async {
-  final db = FirebaseFirestore.instance;
-  final snapshot = await db.collection("places").get();
-  final positions = snapshot.docs.map((e) {
-    final data = e.data();
-    final latlng = data["latlng"] as GeoPoint;
-    return latlng;
-  }).toList();
-  return positions;
 }

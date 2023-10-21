@@ -13,17 +13,18 @@ class CheckInPlace {
     required this.latLng,
   });
 
-  factory CheckInPlace.fromMap(Map<String, dynamic> data) {
-    print(data);
-    final id = data["id"] as String;
-    final name = data["name"] as String;
-    final ipAddress = data["ipAddress"] as String;
-    final latLng = data["latLng"] as GeoPoint;
+  factory CheckInPlace.fromSnapshot(QueryDocumentSnapshot snapshot) {
+    final data = snapshot.data() as Map<String, dynamic>;
     return CheckInPlace(
-      id: id,
-      name: name,
-      ipAddress: ipAddress,
-      latLng: latLng,
+      id: snapshot.id,
+      name: data["name"],
+      ipAddress: data["ipAddress"],
+      latLng: data["latLng"],
     );
+  }
+
+  @override
+  String toString() {
+    return "CheckInPlace(id: $id, name: $name, ipAddress: $ipAddress, latLng: $latLng)";
   }
 }
