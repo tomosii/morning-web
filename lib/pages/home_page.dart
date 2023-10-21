@@ -19,23 +19,45 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage>
     with TickerProviderStateMixin {
-  double _titleOpacity = 0;
-  double _formOpacity = 0;
+  double _headerOpacity = 0;
+  double _statusOpacity = 0;
+  double _buttonOpacity = 0;
+  double _buttonRippleOpacity = 1;
 
-  late AnimationController _controller;
+  bool _checkInLoading = false;
+
+  late AnimationController _animController;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
+    _animController = AnimationController(
       duration: const Duration(milliseconds: 1300),
       vsync: this,
     )..repeat();
+
+    Future.delayed(const Duration(milliseconds: 100), () {
+      setState(() {
+        _headerOpacity = 1;
+      });
+    });
+
+    Future.delayed(const Duration(milliseconds: 700), () {
+      setState(() {
+        _statusOpacity = 1;
+      });
+    });
+
+    Future.delayed(const Duration(milliseconds: 1200), () {
+      setState(() {
+        _buttonOpacity = 1;
+      });
+    });
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _animController.dispose();
     super.dispose();
   }
 
@@ -86,150 +108,163 @@ class _HomePageState extends ConsumerState<HomePage>
   }
 
   Widget _logo() {
-    return Image.asset(
-      'assets/images/morning-logo.png',
-      height: 45,
+    return AnimatedOpacity(
+      duration: const Duration(milliseconds: 900),
+      opacity: _headerOpacity,
+      child: Image.asset(
+        'assets/images/morning-logo.png',
+        height: 45,
+      ),
     );
   }
 
   Widget _currentDateAndTime() {
-    return StreamBuilder<DateTime>(
-      stream: Stream.periodic(
-          const Duration(milliseconds: 100), (_) => DateTime.now()),
-      builder: (BuildContext context, AsyncSnapshot<DateTime> snap) {
-        if (snap.hasData) {
-          final DateTime now = snap.data!;
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "${now.year}年${now.month}月${now.day}日 (火)",
-                style: GoogleFonts.inter(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black.withOpacity(0.4),
-                  letterSpacing: 1.2,
+    return AnimatedOpacity(
+      duration: const Duration(milliseconds: 900),
+      opacity: _headerOpacity,
+      child: StreamBuilder<DateTime>(
+        stream: Stream.periodic(
+            const Duration(milliseconds: 100), (_) => DateTime.now()),
+        builder: (BuildContext context, AsyncSnapshot<DateTime> snap) {
+          if (snap.hasData) {
+            final DateTime now = snap.data!;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "${now.year}年${now.month}月${now.day}日 (火)",
+                  style: GoogleFonts.inter(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black.withOpacity(0.4),
+                    letterSpacing: 1.2,
+                  ),
                 ),
-              ),
-              const SizedBox(
-                height: 1,
-              ),
-              Text(
-                "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}",
-                style: GoogleFonts.inter(
-                  fontSize: 34,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black.withOpacity(0.7),
+                const SizedBox(
+                  height: 1,
                 ),
-              ),
-            ],
-          );
-        } else if (snap.hasError) {
-          return Text("Error: ${snap.error}");
-        } else {
-          return Container();
-        }
-      },
+                Text(
+                  "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}",
+                  style: GoogleFonts.inter(
+                    fontSize: 34,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black.withOpacity(0.75),
+                  ),
+                ),
+              ],
+            );
+          } else if (snap.hasError) {
+            return Text("Error: ${snap.error}");
+          } else {
+            return Container();
+          }
+        },
+      ),
     );
   }
 
   Widget _statusPanel() {
-    return Center(
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: const BorderRadius.all(Radius.circular(10)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 35,
-              offset: const Offset(0, 0),
-              spreadRadius: 2,
-            ),
-          ],
-        ),
-        padding: const EdgeInsets.symmetric(
-          horizontal: 24,
-          vertical: 17,
-        ),
-        child: Column(
-          children: [
-            ref.watch(networkStatusProvider).when(
-                  data: (networkStatus) {
-                    if (networkStatus == NetworkStatus.valid) {
-                      return _statusRow(
-                        Icons.wifi_rounded,
-                        morningBlue,
-                        "指定のネットワークに接続されています",
-                      );
-                    } else {
-                      return _statusRow(
-                        Icons.wifi_off_rounded,
-                        morningPink,
-                        "指定のネットワークに接続されていません",
-                      );
-                    }
-                  },
-                  loading: () => _statusRow(
-                    Icons.wifi,
-                    Colors.black.withOpacity(0.2),
-                    "ネットワーク情報を取得中...",
+    return AnimatedOpacity(
+      duration: const Duration(milliseconds: 900),
+      opacity: _statusOpacity,
+      child: Center(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 35,
+                offset: const Offset(0, 0),
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 24,
+            vertical: 17,
+          ),
+          child: Column(
+            children: [
+              ref.watch(networkStatusProvider).when(
+                    data: (networkStatus) {
+                      if (networkStatus == NetworkStatus.valid) {
+                        return _statusRow(
+                          Icons.wifi_rounded,
+                          morningBlue,
+                          "指定のネットワークに接続されています",
+                        );
+                      } else {
+                        return _statusRow(
+                          Icons.wifi_off_rounded,
+                          morningPink,
+                          "指定のネットワークに接続されていません",
+                        );
+                      }
+                    },
+                    loading: () => _statusRow(
+                      Icons.wifi,
+                      Colors.black.withOpacity(0.2),
+                      "ネットワーク情報を取得中...",
+                    ),
+                    error: (error, stackTrace) => _statusRow(
+                      Icons.wifi_off_rounded,
+                      morningPink,
+                      "ネットワーク情報を取得できませんでした",
+                    ),
                   ),
-                  error: (error, stackTrace) => _statusRow(
-                    Icons.wifi_off_rounded,
-                    morningPink,
-                    "ネットワーク情報を取得できませんでした",
+              const SizedBox(
+                height: 8,
+              ),
+              ref.watch(locationStatusProvider).when(
+                    data: (locationStatus) {
+                      if (locationStatus == LocationStatus.withinRange) {
+                        return _statusRow(
+                          Icons.gps_fixed,
+                          morningBlue,
+                          "チェックインエリア圏内です",
+                        );
+                      } else if (locationStatus == LocationStatus.outOfRange) {
+                        return _statusRow(
+                          Icons.gps_off,
+                          morningPink,
+                          "チェックインエリア圏外です",
+                        );
+                      } else if (locationStatus ==
+                          LocationStatus.notAvailable) {
+                        return _statusRow(
+                          Icons.location_disabled_rounded,
+                          morningPink,
+                          "位置情報を取得できませんでした",
+                        );
+                      } else if (locationStatus == LocationStatus.mocking) {
+                        return _statusRow(
+                          Icons.location_disabled_rounded,
+                          morningPink,
+                          "位置情報が偽装されています",
+                        );
+                      } else {
+                        return _statusRow(
+                          Icons.location_disabled_rounded,
+                          morningPink,
+                          "位置情報を取得できませんでした",
+                        );
+                      }
+                    },
+                    loading: () => _statusRow(
+                      Icons.gps_not_fixed,
+                      Colors.black.withOpacity(0.2),
+                      "位置情報を取得中...",
+                    ),
+                    error: (error, stackTrace) => _statusRow(
+                      Icons.location_disabled_rounded,
+                      morningPink,
+                      "位置情報を取得できませんでした",
+                    ),
                   ),
-                ),
-            const SizedBox(
-              height: 8,
-            ),
-            ref.watch(locationStatusProvider).when(
-                  data: (locationStatus) {
-                    if (locationStatus == LocationStatus.withinRange) {
-                      return _statusRow(
-                        Icons.gps_fixed,
-                        morningBlue,
-                        "チェックインエリア圏内です",
-                      );
-                    } else if (locationStatus == LocationStatus.outOfRange) {
-                      return _statusRow(
-                        Icons.gps_off,
-                        morningPink,
-                        "チェックインエリア圏外です",
-                      );
-                    } else if (locationStatus == LocationStatus.notAvailable) {
-                      return _statusRow(
-                        Icons.location_disabled_rounded,
-                        morningPink,
-                        "位置情報を取得できませんでした",
-                      );
-                    } else if (locationStatus == LocationStatus.mocking) {
-                      return _statusRow(
-                        Icons.location_disabled_rounded,
-                        morningPink,
-                        "位置情報が偽装されています",
-                      );
-                    } else {
-                      return _statusRow(
-                        Icons.location_disabled_rounded,
-                        morningPink,
-                        "位置情報を取得できませんでした",
-                      );
-                    }
-                  },
-                  loading: () => _statusRow(
-                    Icons.gps_not_fixed,
-                    Colors.black.withOpacity(0.2),
-                    "位置情報を取得中...",
-                  ),
-                  error: (error, stackTrace) => _statusRow(
-                    Icons.location_disabled_rounded,
-                    morningPink,
-                    "位置情報を取得できませんでした",
-                  ),
-                ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -260,23 +295,44 @@ class _HomePageState extends ConsumerState<HomePage>
   }
 
   Widget _showCheckInButton() {
-    return ref.watch(isCheckInAvailableProvider).when(
-          data: (isCheckInAvailable) {
-            if (isCheckInAvailable) {
-              return CustomPaint(
+    return AnimatedOpacity(
+      duration: const Duration(milliseconds: 900),
+      opacity: _buttonOpacity,
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 2000),
+              opacity: ref.watch(buttonRippleOpacityProvider),
+              child: CustomPaint(
                 painter: CircleRipplePainter(
-                  _controller,
+                  _animController,
                   color: morningBlue,
                 ),
-                child: _checkInButton(true),
-              );
-            } else {
-              return _checkInButton(false);
-            }
-          },
-          loading: () => _checkInButton(false),
-          error: (error, stackTrace) => _checkInButton(false),
-        );
+                child: const SizedBox(
+                  width: 160,
+                  height: 160,
+                ),
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: ref.watch(isCheckInAvailableProvider).when(
+                  data: (isCheckInAvailable) {
+                    if (isCheckInAvailable) {
+                      return _checkInButton(true);
+                    } else {
+                      return _checkInButton(false);
+                    }
+                  },
+                  loading: () => _checkInButton(false),
+                  error: (error, stackTrace) => _checkInButton(false),
+                ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _checkInButton(bool enabled) {
@@ -296,16 +352,35 @@ class _HomePageState extends ConsumerState<HomePage>
             elevation: 0,
             padding: const EdgeInsets.all(0),
           ),
-          onPressed: () {
-            // if (enabled) {
-            //   Navigator.pushNamed(context, "/checkin");
-            // }
+          onPressed: () async {
+            setState(() {
+              _checkInLoading = true;
+            });
+
+            await Future.delayed(const Duration(milliseconds: 1000));
+
+            if (enabled) {
+              Navigator.pushNamed(context, "/result");
+            }
+
+            setState(() {
+              _checkInLoading = false;
+            });
           },
-          child: Icon(
-            Icons.brightness_7,
-            color: enabled ? morningBlue : Colors.black.withOpacity(0.2),
-            size: 35,
-          ),
+          child: _checkInLoading
+              ? Container(
+                  width: 30,
+                  height: 30,
+                  child: const CircularProgressIndicator(
+                    color: morningBlue,
+                    strokeWidth: 3,
+                  ),
+                )
+              : Icon(
+                  Icons.brightness_7,
+                  color: enabled ? morningBlue : Colors.black.withOpacity(0.2),
+                  size: 35,
+                ),
         ),
       ),
     );
@@ -365,3 +440,7 @@ class _HomePageState extends ConsumerState<HomePage>
     );
   }
 }
+
+final buttonRippleOpacityProvider = StateProvider<double>((ref) {
+  return 0.0;
+});

@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
-import 'package:morning_web/providers/providers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'firebase_options.dart';
 import 'pages/email_page.dart';
 import 'pages/home_page.dart';
+import 'pages/result_page.dart';
+import 'repository/firestore.dart';
 import 'utils/screen_size.dart';
 
 void main() async {
@@ -25,6 +26,9 @@ void main() async {
           fontFamily: "NotoSansJP",
         ),
         home: const MorningApp(),
+        routes: {
+          "/result": (_) => const CheckInResultPage(),
+        },
       ),
     ),
   );
@@ -47,7 +51,9 @@ class _MorningAppState extends ConsumerState<MorningApp> {
   Future<String?> _getLocalEmail() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? email = prefs.getString("email");
-    ref.read(userEmailProvider.notifier).state = email;
+    if (email != null) {
+      fetchUserInfo(email, ref);
+    }
     return email;
   }
 

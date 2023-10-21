@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:morning_web/pages/home_page.dart';
 
 import '../models/place.dart';
 import '../verification/checkin_verification.dart';
@@ -37,6 +38,7 @@ final isCheckInAvailableProvider = FutureProvider<bool>((ref) async {
 
   if (networkStatus == NetworkStatus.valid &&
       locationStatus == LocationStatus.withinRange) {
+    ref.read(buttonRippleOpacityProvider.notifier).state = 1.0;
     return true;
   } else {
     return false;
