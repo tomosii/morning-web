@@ -18,9 +18,11 @@ Future<NetworkStatus> checkNetworkStatus(
 
   // チェックイン場所のIPアドレスと比較
   for (final place in checkInPlaces) {
-    if (myIPAdress.contains(place.ipAddress)) {
-      print("一致したIPアドレス: ${place.ipAddress}");
-      return NetworkStatus.valid;
+    for (final ip in place.ipAddresses) {
+      if (myIPAdress.contains(ip)) {
+        print("一致したIPアドレス: $ip");
+        return NetworkStatus.valid;
+      }
     }
   }
 

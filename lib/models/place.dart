@@ -3,13 +3,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class CheckInPlace {
   final String id;
   final String name;
-  final String ipAddress;
+  final List<String> ipAddresses;
   final GeoPoint latLng;
 
   CheckInPlace({
     required this.id,
     required this.name,
-    required this.ipAddress,
+    required this.ipAddresses,
     required this.latLng,
   });
 
@@ -18,13 +18,13 @@ class CheckInPlace {
     return CheckInPlace(
       id: snapshot.id,
       name: data["name"],
-      ipAddress: data["ipAddress"],
+      ipAddresses: List<String>.from(data["ipAddresses"]),
       latLng: data["latLng"],
     );
   }
 
   @override
   String toString() {
-    return "CheckInPlace(id: $id, name: $name, ipAddress: $ipAddress, latLng: $latLng)";
+    return "CheckInPlace(id: $id, name: $name, ipAddresses: $ipAddresses, latLng: $latLng)";
   }
 }

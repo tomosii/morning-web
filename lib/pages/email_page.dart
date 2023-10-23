@@ -134,10 +134,13 @@ class _EmailPageState extends ConsumerState<EmailPage> {
   Future<bool> findUser(String email) async {
     final db = FirebaseFirestore.instance;
 
+    // try {
+
     // 該当のメールアドレスを持つユーザーが存在するか確認
-    final snapshot = await db.collection("user").doc(email).get();
+    final snapshot = await db.collection("users").doc(email).get();
 
     if (snapshot.exists) {
+      print("User exists: $email");
       final data = snapshot.data();
       ref.read(userEmailProvider.notifier).state = email;
       ref.read(userNameProvider.notifier).state = data?["name"];
@@ -146,6 +149,7 @@ class _EmailPageState extends ConsumerState<EmailPage> {
       await prefs.setString("name", data?["name"]);
       return true;
     } else {
+      print("User not found: $email");
       return false;
     }
   }

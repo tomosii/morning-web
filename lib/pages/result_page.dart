@@ -76,7 +76,7 @@ class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
               ),
               const Icon(
                 Icons.place,
-                size: 45,
+                size: 47,
                 color: morningBlue,
               ),
               const SizedBox(
@@ -85,7 +85,7 @@ class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
               Text(
                 "Studio",
                 style: GoogleFonts.montserrat(
-                  fontSize: 45,
+                  fontSize: 47,
                   fontWeight: FontWeight.w700,
                   color: Colors.black,
                 ),

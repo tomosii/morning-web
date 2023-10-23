@@ -28,12 +28,17 @@ final localEmailProvider = FutureProvider<String?>((ref) async {
 
 final checkInPlacesProvider = FutureProvider<List<CheckInPlace>>((ref) async {
   final db = FirebaseFirestore.instance;
-  final snapshot = await db.collection("place").get();
-  final places = snapshot.docs.map((e) {
-    return CheckInPlace.fromSnapshot(e);
-  }).toList();
-  print("チェックイン場所を取得: $places");
-  return places;
+  try {
+    final snapshot = await db.collection("places").get();
+    final places = snapshot.docs.map((e) {
+      return CheckInPlace.fromSnapshot(e);
+    }).toList();
+    print("チェックイン場所を取得: $places");
+    return places;
+  } catch (e) {
+    print("チェックイン場所の取得に失敗: $e");
+    rethrow;
+  }
 });
 
 final networkStatusProvider = FutureProvider<NetworkStatus>((ref) async {

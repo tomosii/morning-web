@@ -5,7 +5,7 @@ import 'package:morning_web/providers/providers.dart';
 Future<void> fetchUserInfo(String email, Ref ref) async {
   // emailを元にfirestoreからユーザーの名前を取得
   final db = FirebaseFirestore.instance;
-  final user = await db.collection("user").doc(email).get();
+  final user = await db.collection("users").doc(email).get();
   final userName = user.data()!["name"];
 
   print("Fetch userinfo: email: $email, name: $userName");
