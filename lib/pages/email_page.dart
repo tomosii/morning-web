@@ -143,10 +143,9 @@ class _EmailPageState extends ConsumerState<EmailPage> {
       print("User exists: $email");
       final data = snapshot.data();
       ref.read(userEmailProvider.notifier).state = email;
-      ref.read(userNameProvider.notifier).state = data?["name"];
+      ref.read(userNicknameProvider.notifier).state = data?["nickname"];
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString("email", email);
-      await prefs.setString("name", data?["name"]);
       return true;
     } else {
       print("User not found: $email");

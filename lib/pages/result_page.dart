@@ -58,9 +58,6 @@ class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
               ),
               Container(
                 alignment: Alignment.centerRight,
-                padding: const EdgeInsets.only(
-                  right: 20,
-                ),
                 // fromat current datetime
                 child: Text(
                   DateFormat("yyyy/MM/dd HH:mm").format(DateTime.now()),
@@ -108,7 +105,7 @@ class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "${ref.watch(userNameProvider)}さん、おはようございます。",
+                    "${ref.watch(userNicknameProvider)}さん、おはようございます。",
                     style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w900,

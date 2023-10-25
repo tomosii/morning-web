@@ -9,7 +9,7 @@ import '../verification/checkin_verification.dart';
 import '../verification/condition_status.dart';
 
 final userEmailProvider = StateProvider<String?>((ref) => null);
-final userNameProvider = StateProvider<String?>((ref) => null);
+final userNicknameProvider = StateProvider<String?>((ref) => null);
 
 final localEmailProvider = FutureProvider<String?>((ref) async {
   final prefs = await SharedPreferences.getInstance();

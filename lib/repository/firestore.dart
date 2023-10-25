@@ -6,10 +6,10 @@ Future<void> fetchUserInfo(String email, Ref ref) async {
   // emailを元にfirestoreからユーザーの名前を取得
   final db = FirebaseFirestore.instance;
   final user = await db.collection("users").doc(email).get();
-  final userName = user.data()!["name"];
+  final userNickname = user.data()!["nickname"];
 
-  print("Fetch userinfo: email: $email, name: $userName");
+  print("Fetch userinfo: email: $email, name: $userNickname");
 
   ref.read(userEmailProvider.notifier).state = email;
-  ref.read(userNameProvider.notifier).state = userName;
+  ref.read(userNicknameProvider.notifier).state = userNickname;
 }
