@@ -26,6 +26,7 @@ Future<NetworkStatus> checkNetworkStatus(
     }
   }
 
+  print("一致するIPアドレス なし");
   return NetworkStatus.invalid;
 }
 

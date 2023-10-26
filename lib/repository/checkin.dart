@@ -1,10 +1,12 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:morning_web/checkin/checkin_exception.dart';
 
 class CheckInRepository {
-  final Uri _url =
-      Uri.parse("https://d964-157-82-14-84.ngrok-free.app/checkin");
+  final String _url = "https://d964-157-82-14-84.ngrok-free.app/checkin";
+  final String _apiKey = dotenv.env["MORNING_API_KEY"]!;
 
   Future<CheckInResult> checkIn(
     String email,
@@ -19,15 +21,18 @@ class CheckInRepository {
       "longitude": longitude.toString(),
     });
     final response = await http.post(
-      _url,
-      headers: {"Content-Type": "application/json"},
+      Uri.parse(_url),
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": _apiKey,
+      },
       body: body,
     );
 
     if (response.statusCode != 200) {
-      print("チェックインに失敗しました: ${response.body}");
+      print("チェックインに失敗: ${response.statusCode}, ${response.body}");
       final detail = jsonDecode(response.body)["detail"];
-      throw Exception("チェックインに失敗しました: $detail");
+      throw CheckInException(detail);
     }
 
     final data = jsonDecode(response.body);
@@ -40,13 +45,13 @@ class CheckInRepository {
 }
 
 class CheckInResult {
-  final String placeId;
-  final String placeName;
-  final double timeDifferenceSeconds;
+  final String? placeId;
+  final String? placeName;
+  final double? timeDifferenceSeconds;
 
   CheckInResult({
-    required this.placeId,
-    required this.placeName,
-    required this.timeDifferenceSeconds,
+    this.placeId,
+    this.placeName,
+    this.timeDifferenceSeconds,
   });
 }

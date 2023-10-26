@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:morning_web/pages/home_page.dart';
+import 'package:morning_web/repository/checkin.dart';
 import 'package:morning_web/repository/firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/place.dart';
-import '../verification/checkin_verification.dart';
-import '../verification/condition_status.dart';
+import '../checkin/checkin_verification.dart';
+import '../checkin/condition_status.dart';
 
 final userEmailProvider = StateProvider<String?>((ref) => null);
 final userNicknameProvider = StateProvider<String?>((ref) => null);
@@ -43,7 +43,8 @@ final checkInPlacesProvider = FutureProvider<List<CheckInPlace>>((ref) async {
 
 final networkStatusProvider = FutureProvider<NetworkStatus>((ref) async {
   final checkInPlaces = await ref.watch(checkInPlacesProvider.future);
-  return checkNetworkStatus(ref, checkInPlaces);
+  NetworkStatus status = await checkNetworkStatus(ref, checkInPlaces);
+  return status;
 });
 
 final locationStatusProvider = FutureProvider<LocationStatus>((ref) async {
@@ -57,9 +58,22 @@ final isCheckInAvailableProvider = FutureProvider<bool>((ref) async {
 
   if (networkStatus == NetworkStatus.valid &&
       locationStatus == LocationStatus.withinRange) {
-    ref.read(buttonRippleOpacityProvider.notifier).state = 1.0;
+    ref.read(checkInButtonRippleOpacityProvider.notifier).state = 1.0;
     return true;
   } else {
+    ref.read(checkInButtonRippleOpacityProvider.notifier).state = 0.0;
     return false;
   }
+});
+
+final checkInButtonRippleOpacityProvider = StateProvider<double>((ref) {
+  return 0.0;
+});
+
+final checkInRepositoryProvider = Provider<CheckInRepository>((ref) {
+  return CheckInRepository();
+});
+
+final checkInResultProvider = StateProvider<CheckInResult>((ref) {
+  return CheckInResult();
 });

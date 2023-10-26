@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:morning_web/components/error_dialog.dart';
 import 'package:morning_web/providers/providers.dart';
 import 'package:morning_web/repository/checkin.dart';
 import 'package:morning_web/utils/ip_address.dart';
 import 'package:morning_web/utils/location.dart';
-import 'package:morning_web/verification/condition_status.dart';
+import 'package:morning_web/checkin/condition_status.dart';
 
 import '../../constants/colors.dart';
 import '../components/ripple_animation.dart';
@@ -304,7 +305,7 @@ class _HomePageState extends ConsumerState<HomePage>
           Positioned.fill(
             child: AnimatedOpacity(
               duration: const Duration(milliseconds: 2500),
-              opacity: ref.watch(buttonRippleOpacityProvider),
+              opacity: ref.watch(checkInButtonRippleOpacityProvider),
               child: CustomPaint(
                 painter: CircleRipplePainter(
                   _animController,
@@ -353,39 +354,17 @@ class _HomePageState extends ConsumerState<HomePage>
             elevation: 0,
             padding: const EdgeInsets.all(0),
           ),
-          onPressed: () async {
-            if (!enabled) {
+          onPressed: () {
+            if (!enabled || _checkInLoading) {
               return;
             }
-
-            setState(() {
-              _checkInLoading = true;
-            });
-            await Future.delayed(const Duration(milliseconds: 1000));
-
-            final email = ref.read(userEmailProvider)!;
-            final ipAddress = await getIPAddress();
-            final currentPosition = await getCurrentPosition();
-
-            final result = await CheckInRepository().checkIn(
-              email,
-              ipAddress,
-              currentPosition.latitude,
-              currentPosition.longitude,
-            );
-
-            print("Check-in result: $result");
-
-            Navigator.pushNamed(context, "/result");
-            setState(() {
-              _checkInLoading = false;
-            });
+            _checkInAndPush();
           },
           child: _checkInLoading
-              ? SizedBox(
+              ? const SizedBox(
                   width: 30,
                   height: 30,
-                  child: const CircularProgressIndicator(
+                  child: CircularProgressIndicator(
                     color: morningBlue,
                     strokeWidth: 3,
                   ),
@@ -457,8 +436,48 @@ class _HomePageState extends ConsumerState<HomePage>
       ),
     );
   }
-}
 
-final buttonRippleOpacityProvider = StateProvider<double>((ref) {
-  return 0.0;
-});
+  Future<void> _checkInAndPush() async {
+    setState(() {
+      _checkInLoading = true;
+    });
+
+    final email = ref.read(userEmailProvider)!;
+    final ipAddress = await getIPAddress();
+    final currentPosition = await getCurrentPosition();
+
+    try {
+      final result = await CheckInRepository().checkIn(
+        email,
+        ipAddress,
+        currentPosition.latitude,
+        currentPosition.longitude,
+      );
+      print("Check-in result: $result");
+      ref.read(checkInResultProvider.notifier).state = result;
+    } on Exception catch (error) {
+      showDialog(
+        context: context,
+        builder: (_) {
+          return MorningErrorDialog(
+            title: "チェックインに失敗しました",
+            message: error.toString(),
+          );
+        },
+      );
+      setState(() {
+        _checkInLoading = false;
+      });
+
+      // 場所を再取得することで、ステータスを再評価 -> 画面更新
+      ref.invalidate(checkInPlacesProvider);
+
+      return;
+    }
+
+    setState(() {
+      _checkInLoading = false;
+    });
+    Navigator.pushNamed(context, "/result");
+  }
+}

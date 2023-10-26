@@ -36,5 +36,8 @@ Future<Position> getCurrentPosition() async {
 
   // When we reach here, permissions are granted and we can
   // continue accessing the position of the device.
-  return await Geolocator.getCurrentPosition();
+  final currentPosition = await Geolocator.getCurrentPosition();
+
+  // print("現在地: ${currentPosition.latitude}, ${currentPosition.longitude}");
+  return currentPosition;
 }
