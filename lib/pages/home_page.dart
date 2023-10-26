@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:morning_web/providers/providers.dart';
+import 'package:morning_web/repository/checkin.dart';
 import 'package:morning_web/utils/ip_address.dart';
 import 'package:morning_web/utils/location.dart';
 import 'package:morning_web/verification/condition_status.dart';
@@ -109,7 +110,7 @@ class _HomePageState extends ConsumerState<HomePage>
 
   Widget _logo() {
     return AnimatedOpacity(
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 1200),
       opacity: _headerOpacity,
       child: Image.asset(
         'assets/images/morning-logo.png',
@@ -120,7 +121,7 @@ class _HomePageState extends ConsumerState<HomePage>
 
   Widget _currentDateAndTime() {
     return AnimatedOpacity(
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 1200),
       opacity: _headerOpacity,
       child: StreamBuilder<DateTime>(
         stream: Stream.periodic(
@@ -165,7 +166,7 @@ class _HomePageState extends ConsumerState<HomePage>
 
   Widget _statusPanel() {
     return AnimatedOpacity(
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 1200),
       opacity: _statusOpacity,
       child: Center(
         child: Container(
@@ -361,6 +362,20 @@ class _HomePageState extends ConsumerState<HomePage>
               _checkInLoading = true;
             });
             await Future.delayed(const Duration(milliseconds: 1000));
+
+            final email = ref.read(userEmailProvider)!;
+            final ipAddress = await getIPAddress();
+            final currentPosition = await getCurrentPosition();
+
+            final result = await CheckInRepository().checkIn(
+              email,
+              ipAddress,
+              currentPosition.latitude,
+              currentPosition.longitude,
+            );
+
+            print("Check-in result: $result");
+
             Navigator.pushNamed(context, "/result");
             setState(() {
               _checkInLoading = false;
