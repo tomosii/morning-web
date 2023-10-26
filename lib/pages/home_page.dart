@@ -76,6 +76,7 @@ class _HomePageState extends ConsumerState<HomePage>
             horizontal: 28,
           ),
           child: SingleChildScrollView(
+            // physics: const AlwaysScrollableScrollPhysics(),
             clipBehavior: Clip.none,
             padding: EdgeInsets.zero,
             child: Column(
@@ -442,8 +443,12 @@ class _HomePageState extends ConsumerState<HomePage>
       _checkInLoading = true;
     });
 
+    print("チェックイン処理を開始");
+
     final email = ref.read(userEmailProvider)!;
+    print("IPアドレスを取得中...");
     final ipAddress = await getIPAddress();
+    print("位置情報を取得中...");
     final currentPosition = await getCurrentPosition();
 
     try {

@@ -17,8 +17,9 @@ class CheckInResultPage extends ConsumerStatefulWidget {
 
 class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
     with TickerProviderStateMixin {
-  double _titleOpacity = 0;
-  double _formOpacity = 0;
+  double _placeOpacity = 0;
+  double _timeOpacity = 0;
+  double _messageOpacity = 0;
 
   late ConfettiController _confettiController;
 
@@ -30,6 +31,24 @@ class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
     Future.delayed(const Duration(milliseconds: 1000), () {
       _confettiController.play();
     });
+
+    Future.delayed(const Duration(milliseconds: 300), () {
+      setState(() {
+        _placeOpacity = 1;
+      });
+    });
+
+    Future.delayed(const Duration(milliseconds: 900), () {
+      setState(() {
+        _timeOpacity = 1;
+      });
+    });
+
+    Future.delayed(const Duration(milliseconds: 1500), () {
+      setState(() {
+        _messageOpacity = 1;
+      });
+    });
   }
 
   @override
@@ -40,6 +59,7 @@ class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
 
   @override
   Widget build(BuildContext context) {
+    final checkInResult = ref.watch(checkInResultProvider);
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
@@ -71,82 +91,129 @@ class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
               const SizedBox(
                 height: 70,
               ),
-              const Icon(
-                Icons.place,
-                size: 47,
-                color: morningBlue,
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Text(
-                "Studio",
-                style: GoogleFonts.montserrat(
-                  fontSize: 47,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black,
+              AnimatedOpacity(
+                duration: const Duration(milliseconds: 1000),
+                opacity: _placeOpacity,
+                child: Column(
+                  children: [
+                    const Icon(
+                      Icons.place,
+                      size: 47,
+                      color: morningBlue,
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      checkInResult.placeName ?? "",
+                      style: GoogleFonts.montserrat(
+                        fontSize: 47,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(
                 height: 15,
               ),
-              const Text(
-                "-1時間7分",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w800,
-                  color: morningBlue,
+              AnimatedOpacity(
+                duration: const Duration(milliseconds: 1000),
+                opacity: _timeOpacity,
+                child: Text(
+                  _parseTimeDifference(
+                      checkInResult.timeDifferenceSeconds ?? 0),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    color: (checkInResult.timeDifferenceSeconds! < 0)
+                        ? morningBlue
+                        : morningPink,
+                  ),
                 ),
               ),
               const SizedBox(
                 height: 100,
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "${ref.watch(userNicknameProvider)}さん、おはようございます。",
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.black.withOpacity(0.8)),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    "ギリギリセーフです！",
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.black.withOpacity(0.8)),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    "チェックインを記録しました。",
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.black.withOpacity(0.8)),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 80,
-              ),
-              PrimaryButton(
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
-                text: "OK",
-                width: 140,
+              AnimatedOpacity(
+                duration: const Duration(milliseconds: 1000),
+                opacity: _messageOpacity,
+                child: Column(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "${ref.watch(userNicknameProvider)}さん、おはようございます。",
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.black.withOpacity(0.8)),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          "ギリギリセーフです！",
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.black.withOpacity(0.8)),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          "チェックインを記録しました。",
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.black.withOpacity(0.8)),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 80,
+                    ),
+                    PrimaryButton(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      text: "OK",
+                      width: 140,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  String _parseTimeDifference(final double seconds) {
+    final absSeconds = seconds.abs();
+
+    final hour = absSeconds ~/ 3600;
+    final minute = (absSeconds % 3600) ~/ 60;
+    final second = absSeconds.toInt() % 60;
+
+    String timeText = "";
+
+    if (hour == 0 && minute == 0) {
+      timeText = "$second秒";
+    } else if (hour == 0) {
+      timeText = "$minute分$second秒";
+    } else {
+      timeText = "$hour時間$minute分";
+    }
+
+    if (seconds < 0) {
+      return "- $timeText";
+    } else {
+      return "+ $timeText";
+    }
   }
 }
