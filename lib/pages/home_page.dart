@@ -175,7 +175,7 @@ class _HomePageState extends ConsumerState<HomePage>
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: const BorderRadius.all(Radius.circular(12)),
+            borderRadius: const BorderRadius.all(Radius.circular(14)),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.08),
@@ -308,13 +308,13 @@ class _HomePageState extends ConsumerState<HomePage>
               ),
               if (detail != null) ...[
                 const SizedBox(
-                  height: 2,
+                  height: 3,
                 ),
                 Text(
                   detail,
                   style: TextStyle(
-                    fontSize: 9,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
                     color: Colors.black.withOpacity(0.4),
                   ),
                 ),

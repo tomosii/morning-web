@@ -52,7 +52,7 @@ flutter:
           weight: 900
 
   assets:
-    - .env
+    - env
     - assets/images/
     - assets/lottie/
     - assets/google_fonts/
