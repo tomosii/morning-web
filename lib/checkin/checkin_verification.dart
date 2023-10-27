@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:morning_web/models/place.dart';
+import 'package:morning_web/providers/providers.dart';
 import 'package:morning_web/utils/ip_address.dart';
 
 import '../utils/location.dart';
@@ -20,7 +21,9 @@ Future<NetworkStatus> checkNetworkStatus(
   for (final place in checkInPlaces) {
     for (final ip in place.ipAddresses) {
       if (myIPAdress.contains(ip)) {
-        print("一致したIPアドレス: $ip");
+        print("一致したIPアドレス: $ip (${place.name})");
+        final currentPlace = place;
+        ref.read(networkDestinationProvider.notifier).state = currentPlace.name;
         return NetworkStatus.valid;
       }
     }
@@ -61,8 +64,11 @@ Future<LocationStatus> checkLocationStatus(
 
   // 最短距離を取得
   final minDistance = distanceFromGoal.reduce(min);
+  final minDistancePlace = checkInplaces[distanceFromGoal.indexOf(minDistance)];
 
-  print("最短距離: $minDistance");
+  print("最短距離: $minDistance (${minDistancePlace.name})");
+
+  ref.read(locationDistanceProvider.notifier).state = minDistance;
 
   if (minDistance > 30) {
     return LocationStatus.outOfRange;

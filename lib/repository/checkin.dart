@@ -5,7 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:morning_web/checkin/checkin_exception.dart';
 
 class CheckInRepository {
-  final String _url = "https://d964-157-82-14-84.ngrok-free.app/checkin";
+  final String _url = "https://7004-157-82-13-155.ngrok.io/checkin";
   final String _apiKey = dotenv.env["MORNING_API_KEY"]!;
 
   Future<CheckInResult> checkIn(

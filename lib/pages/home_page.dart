@@ -67,18 +67,19 @@ class _HomePageState extends ConsumerState<HomePage>
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: Container(
-          alignment: Alignment.topCenter,
-          constraints: const BoxConstraints(
-            maxWidth: 400,
-          ),
-          padding: const EdgeInsets.symmetric(
-            horizontal: 28,
-          ),
-          child: SingleChildScrollView(
-            // physics: const AlwaysScrollableScrollPhysics(),
-            clipBehavior: Clip.none,
-            padding: EdgeInsets.zero,
+        heightFactor: 1,
+        child: SingleChildScrollView(
+          // physics: const AlwaysScrollableScrollPhysics(),
+          clipBehavior: Clip.none,
+          padding: EdgeInsets.zero,
+          child: Container(
+            alignment: Alignment.topCenter,
+            constraints: const BoxConstraints(
+              maxWidth: 400,
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 28,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -174,7 +175,7 @@ class _HomePageState extends ConsumerState<HomePage>
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: const BorderRadius.all(Radius.circular(10)),
+            borderRadius: const BorderRadius.all(Radius.circular(12)),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.08),
@@ -186,7 +187,7 @@ class _HomePageState extends ConsumerState<HomePage>
           ),
           padding: const EdgeInsets.symmetric(
             horizontal: 24,
-            vertical: 17,
+            vertical: 24,
           ),
           child: Column(
             children: [
@@ -194,76 +195,81 @@ class _HomePageState extends ConsumerState<HomePage>
                     data: (networkStatus) {
                       if (networkStatus == NetworkStatus.valid) {
                         return _statusRow(
-                          Icons.wifi_rounded,
-                          morningBlue,
-                          "指定のネットワークに接続されています",
+                          icon: Icons.wifi_rounded,
+                          color: morningBlue,
+                          text: "指定のネットワークに接続されています",
+                          detail: ref.watch(networkDestinationProvider),
                         );
                       } else {
                         return _statusRow(
-                          Icons.wifi_off_rounded,
-                          morningPink,
-                          "指定のネットワークに接続されていません",
+                          icon: Icons.wifi_off_rounded,
+                          color: morningPink,
+                          text: "指定のネットワークに接続されていません",
                         );
                       }
                     },
                     loading: () => _statusRow(
-                      Icons.wifi,
-                      Colors.black.withOpacity(0.2),
-                      "ネットワーク情報を取得中...",
+                      icon: Icons.wifi,
+                      color: Colors.black.withOpacity(0.2),
+                      text: "ネットワーク情報を取得中...",
                     ),
                     error: (error, stackTrace) => _statusRow(
-                      Icons.wifi_off_rounded,
-                      morningPink,
-                      "ネットワーク情報を取得できませんでした",
+                      icon: Icons.wifi_off_rounded,
+                      color: morningPink,
+                      text: "ネットワーク情報を取得できませんでした",
                     ),
                   ),
               const SizedBox(
-                height: 8,
+                height: 14,
               ),
               ref.watch(locationStatusProvider).when(
                     data: (locationStatus) {
                       if (locationStatus == LocationStatus.withinRange) {
+                        final place = ref.watch(networkDestinationProvider);
+                        final distance =
+                            ref.watch(locationDistanceProvider).toInt();
                         return _statusRow(
-                          Icons.gps_fixed,
-                          morningBlue,
-                          "チェックインエリア圏内です",
+                          icon: Icons.gps_fixed,
+                          color: morningBlue,
+                          text: "チェックインエリア圏内です",
+                          detail: "${place} から${distance}m",
                         );
                       } else if (locationStatus == LocationStatus.outOfRange) {
                         return _statusRow(
-                          Icons.gps_off,
-                          morningPink,
-                          "チェックインエリア圏外です",
+                          icon: Icons.gps_off,
+                          color: morningPink,
+                          text: "チェックインエリア圏外です",
                         );
                       } else if (locationStatus ==
                           LocationStatus.notAvailable) {
                         return _statusRow(
-                          Icons.location_disabled_rounded,
-                          morningPink,
-                          "位置情報を取得できませんでした",
+                          icon: Icons.location_disabled_rounded,
+                          color: morningPink,
+                          text: "位置情報を取得できませんでした",
                         );
                       } else if (locationStatus == LocationStatus.mocking) {
                         return _statusRow(
-                          Icons.location_disabled_rounded,
-                          morningPink,
-                          "位置情報が偽装されています",
+                          icon: Icons.location_disabled_rounded,
+                          color: morningPink,
+                          text: "位置情報が偽装されています",
                         );
                       } else {
                         return _statusRow(
-                          Icons.location_disabled_rounded,
-                          morningPink,
-                          "位置情報を取得できませんでした",
+                          icon: Icons.location_disabled_rounded,
+                          color: morningPink,
+                          text: "位置情報を取得できませんでした",
                         );
                       }
                     },
                     loading: () => _statusRow(
-                      Icons.gps_not_fixed,
-                      Colors.black.withOpacity(0.2),
-                      "位置情報を取得中...",
+                      icon: Icons.gps_not_fixed,
+                      color: Colors.black.withOpacity(0.2),
+                      text: "位置情報を取得中...",
                     ),
                     error: (error, stackTrace) => _statusRow(
-                      Icons.location_disabled_rounded,
-                      morningPink,
-                      "位置情報を取得できませんでした",
+                      icon: Icons.location_disabled_rounded,
+                      color: morningPink,
+                      text: "位置情報を取得できませんでした",
                     ),
                   ),
             ],
@@ -273,7 +279,12 @@ class _HomePageState extends ConsumerState<HomePage>
     );
   }
 
-  Widget _statusRow(IconData icon, Color color, String text) {
+  Widget _statusRow({
+    required IconData icon,
+    required Color color,
+    required String text,
+    String? detail,
+  }) {
     return Row(
       children: [
         Icon(
@@ -284,13 +295,31 @@ class _HomePageState extends ConsumerState<HomePage>
           width: 15,
         ),
         Expanded(
-          child: Text(
-            text,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: Colors.black.withOpacity(0.65),
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                text,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black.withOpacity(0.65),
+                ),
+              ),
+              if (detail != null) ...[
+                const SizedBox(
+                  height: 2,
+                ),
+                Text(
+                  detail,
+                  style: TextStyle(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black.withOpacity(0.4),
+                  ),
+                ),
+              ],
+            ],
           ),
         ),
       ],

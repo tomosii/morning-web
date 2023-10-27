@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -127,7 +129,7 @@ class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w800,
-                    color: (checkInResult.timeDifferenceSeconds! < 0)
+                    color: ((checkInResult.timeDifferenceSeconds ?? 0) < 0)
                         ? morningBlue
                         : morningPink,
                   ),
@@ -155,7 +157,7 @@ class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
                           height: 10,
                         ),
                         Text(
-                          "ギリギリセーフです！",
+                          _message(checkInResult.timeDifferenceSeconds ?? 0),
                           style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w900,
@@ -193,7 +195,7 @@ class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
     );
   }
 
-  String _parseTimeDifference(final double seconds) {
+  String _parseTimeDifference(double seconds) {
     final absSeconds = seconds.abs();
 
     final hour = absSeconds ~/ 3600;
@@ -214,6 +216,31 @@ class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
       return "- $timeText";
     } else {
       return "+ $timeText";
+    }
+  }
+
+  String _message(double seconds) {
+    final now = DateTime.now();
+
+    final sentences = [
+      "いい朝ですね！",
+      "今日も一日頑張っていきましょう！",
+      "朝の時間を有効に使っていきましょう！",
+    ];
+
+    if (-120 < seconds && seconds < 0) {
+      return "ギリギリセーフです！";
+    } else if (now.hour < 7 && now.minute < 30) {
+      return "とても早い朝ですね！";
+    } else if (seconds < -3600) {
+      return "余裕を持っていて素晴らしいです！";
+    } else if (0 <= seconds && seconds < 300) {
+      return "惜しい！ あともう少しでしたね！";
+    } else if (0 < seconds) {
+      return "寝坊してしまいましたか？";
+    } else {
+      final random = Random();
+      return sentences[random.nextInt(sentences.length)];
     }
   }
 }

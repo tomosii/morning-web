@@ -77,3 +77,11 @@ final checkInRepositoryProvider = Provider<CheckInRepository>((ref) {
 final checkInResultProvider = StateProvider<CheckInResult>((ref) {
   return CheckInResult();
 });
+
+final networkDestinationProvider = StateProvider<String>((ref) {
+  return "";
+});
+
+final locationDistanceProvider = StateProvider<double>((ref) {
+  return 0.0;
+});
