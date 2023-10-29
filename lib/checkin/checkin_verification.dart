@@ -69,6 +69,7 @@ Future<LocationStatus> checkLocationStatus(
   print("最短距離: $minDistance (${minDistancePlace.name})");
 
   ref.read(locationDistanceProvider.notifier).state = minDistance;
+  ref.read(locationNameProvider.notifier).state = minDistancePlace.name;
 
   if (minDistance > 30) {
     return LocationStatus.outOfRange;

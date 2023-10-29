@@ -85,3 +85,7 @@ final networkDestinationProvider = StateProvider<String>((ref) {
 final locationDistanceProvider = StateProvider<double>((ref) {
   return 0.0;
 });
+
+final locationNameProvider = StateProvider<String>((ref) {
+  return "";
+});

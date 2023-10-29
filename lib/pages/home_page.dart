@@ -11,6 +11,7 @@ import 'package:morning_web/checkin/condition_status.dart';
 
 import '../../constants/colors.dart';
 import '../components/ripple_animation.dart';
+import '../utils/date.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -136,7 +137,7 @@ class _HomePageState extends ConsumerState<HomePage>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "${now.year}年${now.month}月${now.day}日 (火)",
+                  "${now.year}年${now.month}月${now.day}日 (${getJPTodayDayOfWeek()})",
                   style: GoogleFonts.inter(
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
@@ -225,7 +226,10 @@ class _HomePageState extends ConsumerState<HomePage>
               ref.watch(locationStatusProvider).when(
                     data: (locationStatus) {
                       if (locationStatus == LocationStatus.withinRange) {
-                        final place = ref.watch(networkDestinationProvider);
+                        String place = ref.watch(networkDestinationProvider);
+                        if (place == "") {
+                          place = ref.watch(locationNameProvider);
+                        }
                         final distance =
                             ref.watch(locationDistanceProvider).toInt();
                         return _statusRow(
