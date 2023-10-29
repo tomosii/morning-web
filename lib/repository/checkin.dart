@@ -5,7 +5,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:morning_web/checkin/checkin_exception.dart';
 
 class CheckInRepository {
-  final String _url = "https://slack-morning-bot.vercel.app/checkin";
+  final String _baseUrl = "https://slack-morning-bot.vercel.app";
+  // final String _baseUrl = "http://127.0.0.1:8000";
+
   final String _apiKey = dotenv.env["MORNING_API_KEY"]!;
 
   Future<CheckInResult> checkIn(
@@ -21,7 +23,7 @@ class CheckInRepository {
       "longitude": longitude.toString(),
     });
     final response = await http.post(
-      Uri.parse(_url),
+      Uri.parse("$_baseUrl/checkin"),
       headers: {
         "Content-Type": "application/json",
         "x-api-key": _apiKey,
@@ -54,4 +56,9 @@ class CheckInResult {
     this.placeName,
     this.timeDifferenceSeconds,
   });
+
+  @override
+  String toString() {
+    return "CheckInResult(placeId: $placeId, placeName: $placeName, timeDifferenceSeconds: $timeDifferenceSeconds)";
+  }
 }

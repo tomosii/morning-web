@@ -49,7 +49,7 @@ class _HomePageState extends ConsumerState<HomePage>
       });
     });
 
-    Future.delayed(const Duration(milliseconds: 1500), () {
+    Future.delayed(const Duration(milliseconds: 1600), () {
       setState(() {
         _buttonOpacity = 1;
       });
@@ -113,7 +113,7 @@ class _HomePageState extends ConsumerState<HomePage>
 
   Widget _logo() {
     return AnimatedOpacity(
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 1400),
       opacity: _headerOpacity,
       child: Image.asset(
         'assets/images/morning-logo.png',
@@ -124,7 +124,7 @@ class _HomePageState extends ConsumerState<HomePage>
 
   Widget _currentDateAndTime() {
     return AnimatedOpacity(
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 1400),
       opacity: _headerOpacity,
       child: StreamBuilder<DateTime>(
         stream: Stream.periodic(
@@ -169,7 +169,7 @@ class _HomePageState extends ConsumerState<HomePage>
 
   Widget _statusPanel() {
     return AnimatedOpacity(
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 1400),
       opacity: _statusOpacity,
       child: Center(
         child: Container(
@@ -328,7 +328,7 @@ class _HomePageState extends ConsumerState<HomePage>
 
   Widget _showCheckInButton() {
     return AnimatedOpacity(
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 1400),
       opacity: _buttonOpacity,
       child: Stack(
         children: [
@@ -411,7 +411,7 @@ class _HomePageState extends ConsumerState<HomePage>
 
   Widget _debugInfo() {
     return AnimatedOpacity(
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 1400),
       opacity: _buttonOpacity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
