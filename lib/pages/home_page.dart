@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +11,7 @@ import 'package:morning_web/repository/checkin.dart';
 import 'package:morning_web/utils/ip_address.dart';
 import 'package:morning_web/utils/location.dart';
 import 'package:morning_web/checkin/condition_status.dart';
+import 'package:morning_web/utils/screen_size.dart';
 import 'package:sprung/sprung.dart';
 
 import '../../constants/colors.dart';
@@ -34,20 +36,40 @@ class _HomePageState extends ConsumerState<HomePage>
 
   bool _checkInLoading = false;
 
-  late final AnimationController _rippleAnimController;
+  double _rippleSize = 0;
+
+  late final AnimationController _bottonRippleAnimController;
+  late final AnimationController _rippleTransitionAnimController;
+  late final Animation<double> _rippleTransitionAnimation;
 
   @override
   void initState() {
     super.initState();
-    _rippleAnimController = AnimationController(
+    _bottonRippleAnimController = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     )..repeat();
 
+    _rippleTransitionAnimController = AnimationController(
+      duration: const Duration(milliseconds: 1200),
+      vsync: this,
+    );
+
+    // Stop the animation at first
+    _rippleTransitionAnimation = Tween<double>(
+      begin: 0,
+      end: max(ScreenSize.width, ScreenSize.height) * 2,
+    ).animate(
+      CurvedAnimation(
+        parent: _rippleTransitionAnimController,
+        curve: Curves.fastOutSlowIn,
+      ),
+    );
+
     Future.delayed(const Duration(milliseconds: 300), () {
       setState(() {
         _headerOpacity = 1;
-        _bgOpacity = 0.5;
+        _bgOpacity = 0.4;
       });
     });
 
@@ -67,7 +89,8 @@ class _HomePageState extends ConsumerState<HomePage>
 
   @override
   void dispose() {
-    _rippleAnimController.dispose();
+    _bottonRippleAnimController.dispose();
+    _rippleTransitionAnimController.dispose();
     super.dispose();
   }
 
@@ -77,69 +100,74 @@ class _HomePageState extends ConsumerState<HomePage>
       backgroundColor: Colors.white,
       body: Center(
         heightFactor: 1,
-        child: SingleChildScrollView(
-          // physics: const AlwaysScrollableScrollPhysics(),
-          clipBehavior: Clip.none,
-          padding: EdgeInsets.zero,
-          child: Stack(
-            alignment: Alignment.topCenter,
-            clipBehavior: Clip.none,
-            children: [
-              Positioned(
-                right: -130,
-                top: -100,
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 800),
-                  opacity: _bgOpacity,
-                  child: Image.asset(
-                    "assets/images/yellow-circle.png",
-                    width: 280,
-                    height: 280,
+        child: Stack(
+          alignment: Alignment.topCenter,
+          children: [
+            Stack(
+              clipBehavior: Clip.none,
+              alignment: Alignment.topCenter,
+              children: [
+                Positioned(
+                  right: -130,
+                  top: -120,
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 1000),
+                    opacity: _bgOpacity,
+                    child: Image.asset(
+                      "assets/images/yellow-circle.png",
+                      width: 280,
+                      height: 280,
+                    ),
                   ),
                 ),
-              ),
-              BackdropFilter(
-                filter: ImageFilter.blur(
-                  sigmaX: 30,
-                  sigmaY: 30,
+                BackdropFilter(
+                  filter: ImageFilter.blur(
+                    sigmaX: 30,
+                    sigmaY: 30,
+                  ),
+                  child: SingleChildScrollView(
+                    clipBehavior: Clip.none,
+                    // physics: const AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.zero,
+                    child: Container(
+                      alignment: Alignment.topCenter,
+                      constraints: const BoxConstraints(
+                        maxWidth: 400,
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 28,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          _logo(),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          _currentDateAndTime(),
+                          const SizedBox(
+                            height: 40,
+                          ),
+                          _statusPanel(),
+                          const SizedBox(
+                            height: 100,
+                          ),
+                          _showCheckInButton(),
+                          const SizedBox(
+                            height: 100,
+                          ),
+                          _debugInfo(),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-                child: Container(
-                  alignment: Alignment.topCenter,
-                  constraints: const BoxConstraints(
-                    maxWidth: 400,
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 28,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      _logo(),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      _currentDateAndTime(),
-                      const SizedBox(
-                        height: 40,
-                      ),
-                      _statusPanel(),
-                      const SizedBox(
-                        height: 100,
-                      ),
-                      _showCheckInButton(),
-                      const SizedBox(
-                        height: 100,
-                      ),
-                      _debugInfo(),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -370,43 +398,62 @@ class _HomePageState extends ConsumerState<HomePage>
   }
 
   Widget _showCheckInButton() {
-    return AnimatedOpacity(
-      duration: const Duration(milliseconds: 1400),
-      opacity: _buttonOpacity,
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: AnimatedOpacity(
-              duration: const Duration(milliseconds: 2500),
-              opacity: ref.watch(checkInButtonRippleOpacityProvider),
-              child: CustomPaint(
-                painter: CircleRipplePainter(
-                  _rippleAnimController,
-                  color: morningBlue,
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        AnimatedOpacity(
+          duration: const Duration(milliseconds: 1400),
+          opacity: _buttonOpacity,
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 2500),
+                  opacity: ref.watch(checkInButtonRippleOpacityProvider),
+                  child: CustomPaint(
+                    painter: CircleRipplePainter(
+                      _bottonRippleAnimController,
+                      color: morningBlue,
+                    ),
+                    child: const SizedBox(
+                      width: 160,
+                      height: 160,
+                    ),
+                  ),
                 ),
-                child: const SizedBox(
-                  width: 160,
-                  height: 160,
-                ),
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: ref.watch(isCheckInAvailableProvider).when(
+                      data: (isCheckInAvailable) {
+                        if (isCheckInAvailable) {
+                          return _checkInButton(true);
+                        } else {
+                          return _checkInButton(false);
+                        }
+                      },
+                      loading: () => _checkInButton(false),
+                      error: (error, stackTrace) => _checkInButton(false),
+                    ),
+              ),
+            ],
+          ),
+        ),
+        Align(
+          alignment: Alignment.topCenter,
+          child: ScaleTransition(
+            scale: _rippleTransitionAnimation,
+            child: Container(
+              width: 1,
+              height: 1,
+              decoration: ShapeDecoration(
+                shape: CircleBorder(),
+                color: Colors.red.withOpacity(0.5),
               ),
             ),
           ),
-          Align(
-            alignment: Alignment.center,
-            child: ref.watch(isCheckInAvailableProvider).when(
-                  data: (isCheckInAvailable) {
-                    if (isCheckInAvailable) {
-                      return _checkInButton(true);
-                    } else {
-                      return _checkInButton(false);
-                    }
-                  },
-                  loading: () => _checkInButton(false),
-                  error: (error, stackTrace) => _checkInButton(false),
-                ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -511,6 +558,8 @@ class _HomePageState extends ConsumerState<HomePage>
   }
 
   Future<void> _checkInAndPush() async {
+    _rippleTransitionAnimController.forward();
+    return;
     setState(() {
       _checkInLoading = true;
     });
