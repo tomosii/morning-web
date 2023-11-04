@@ -22,7 +22,6 @@ final localEmailProvider = FutureProvider<String?>((ref) async {
     // SharedPreferenceに上書き
     await prefs.setString("email", email);
   }
-
   return email;
 });
 
@@ -55,8 +54,6 @@ final locationStatusProvider = FutureProvider<LocationStatus>((ref) async {
 final isCheckInAvailableProvider = FutureProvider<bool>((ref) async {
   final networkStatus = await ref.watch(networkStatusProvider.future);
   final locationStatus = await ref.watch(locationStatusProvider.future);
-
-  return true;
 
   if (networkStatus == NetworkStatus.valid &&
       locationStatus == LocationStatus.withinRange) {

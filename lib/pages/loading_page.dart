@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:morning_web/checkin/checkin_status.dart';
 import 'package:morning_web/providers/providers.dart';
 
 import '../../constants/colors.dart';
@@ -14,13 +15,8 @@ class CheckInLoadingPage extends ConsumerStatefulWidget {
   ConsumerState<CheckInLoadingPage> createState() => _CheckInLoadingPageState();
 }
 
-class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage>
-    with TickerProviderStateMixin {
-  double _placeOpacity = 0;
-  double _timeOpacity = 0;
-  double _messageOpacity = 0;
-
-  late ConfettiController _confettiController;
+class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage> {
+  late final Timer _timer;
 
   LinearGradient _bgGradient = const LinearGradient(
     colors: [
@@ -74,29 +70,17 @@ class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage>
       });
     });
 
-    Timer.periodic(const Duration(milliseconds: 800), (timer) {
+    _timer = Timer.periodic(const Duration(milliseconds: 800), (timer) {
       setState(() {
         _bgGradient = _gradients[timer.tick % _gradients.length];
       });
     });
+  }
 
-    // Future.delayed(const Duration(milliseconds: 300), () {
-    //   setState(() {
-    //     _placeOpacity = 1;
-    //   });
-    // });
-
-    // Future.delayed(const Duration(milliseconds: 900), () {
-    //   setState(() {
-    //     _timeOpacity = 1;
-    //   });
-    // });
-
-    // Future.delayed(const Duration(milliseconds: 1500), () {
-    //   setState(() {
-    //     _messageOpacity = 1;
-    //   });
-    // });
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 
   @override
@@ -120,23 +104,76 @@ class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage>
             padding: const EdgeInsets.symmetric(
               horizontal: 28,
             ),
-            child: Column(
-              children: [
-                const SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  status.toString(),
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
+            child: Container(
+              margin: const EdgeInsets.only(top: 120),
+              height: 220,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _statusRow(
+                    text: "IPアドレスを取得中...",
+                    loading: status.index >=
+                        CheckInProcessStatus.fetchingNetwork.index,
+                    done: status.index >
+                        CheckInProcessStatus.fetchingNetwork.index,
                   ),
-                ),
-              ],
+                  _statusRow(
+                    text: "現在地を取得中...",
+                    loading: status.index >=
+                        CheckInProcessStatus.fetchingLocation.index,
+                    done: status.index >
+                        CheckInProcessStatus.fetchingLocation.index,
+                  ),
+                  _statusRow(
+                    text: "サーバーと通信中...",
+                    loading: status.index >=
+                        CheckInProcessStatus.connectingToServer.index,
+                    done: status.index >
+                        CheckInProcessStatus.connectingToServer.index,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _statusRow({
+    required String text,
+    required bool loading,
+    required bool done,
+  }) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        AnimatedOpacity(
+          opacity: done ? 1 : 0,
+          duration: const Duration(milliseconds: 400),
+          child: Icon(
+            Icons.check_rounded,
+            color: Colors.white.withOpacity(0.7),
+            size: 24,
+          ),
+        ),
+        const SizedBox(
+          width: 20,
+        ),
+        AnimatedOpacity(
+          opacity: loading ? 1 : 0,
+          duration: const Duration(milliseconds: 600),
+          child: Text(
+            text,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

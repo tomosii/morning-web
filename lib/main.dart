@@ -10,6 +10,7 @@ import 'constants/colors.dart';
 import 'firebase_options.dart';
 import 'pages/email_page.dart';
 import 'pages/home_page.dart';
+import 'pages/loading_page.dart';
 import 'pages/result_page.dart';
 import 'providers/providers.dart';
 import 'utils/screen_size.dart';
@@ -45,6 +46,7 @@ void main() async {
         home: const MorningApp(),
         routes: {
           "/result": (_) => const CheckInResultPage(),
+          "/loading": (_) => const CheckInLoadingPage(),
         },
       ),
     ),
@@ -63,6 +65,7 @@ class _MorningAppState extends ConsumerState<MorningApp> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     ScreenSize(context);
+    ref.invalidate(localEmailProvider);
   }
 
   @override

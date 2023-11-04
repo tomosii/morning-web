@@ -89,18 +89,15 @@ Future<void> checkIn(BuildContext context, WidgetRef ref) async {
       CheckInProcessStatus.fetchingNetwork;
   print("IPアドレスを取得中...");
   final ipAddress = await getIPAddress();
-  await Future.delayed(const Duration(milliseconds: 700));
 
   ref.read(checkInProcessStatusProvider.notifier).state =
       CheckInProcessStatus.fetchingLocation;
   print("位置情報を取得中...");
   final currentPosition = await getCurrentPosition();
-  await Future.delayed(const Duration(milliseconds: 700));
 
   ref.read(checkInProcessStatusProvider.notifier).state =
       CheckInProcessStatus.connectingToServer;
   print("サーバーと通信中...");
-  await Future.delayed(const Duration(milliseconds: 700));
 
   try {
     final result = await CheckInRepository().post(
@@ -115,7 +112,11 @@ Future<void> checkIn(BuildContext context, WidgetRef ref) async {
     ref.read(checkInProcessStatusProvider.notifier).state =
         CheckInProcessStatus.done;
 
-    Navigator.pushNamed(context, "/result");
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      "/result",
+      (_) => false,
+    );
   } on Exception catch (error) {
     // 場所を再取得することで、ステータスを再評価 -> 画面更新
     ref.invalidate(checkInPlacesProvider);
