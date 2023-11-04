@@ -9,3 +9,11 @@ enum LocationStatus {
   notAvailable,
   mocking,
 }
+
+enum CheckInProcessStatus {
+  notStarted,
+  fetchingNetwork,
+  fetchingLocation,
+  connectingToServer,
+  done,
+}

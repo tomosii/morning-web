@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/place.dart';
 import '../checkin/checkin_verification.dart';
-import '../checkin/condition_status.dart';
+import '../checkin/checkin_status.dart';
 
 final userEmailProvider = StateProvider<String?>((ref) => null);
 final userNicknameProvider = StateProvider<String?>((ref) => null);
@@ -55,6 +55,8 @@ final locationStatusProvider = FutureProvider<LocationStatus>((ref) async {
 final isCheckInAvailableProvider = FutureProvider<bool>((ref) async {
   final networkStatus = await ref.watch(networkStatusProvider.future);
   final locationStatus = await ref.watch(locationStatusProvider.future);
+
+  return true;
 
   if (networkStatus == NetworkStatus.valid &&
       locationStatus == LocationStatus.withinRange) {

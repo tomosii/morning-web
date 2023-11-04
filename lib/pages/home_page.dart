@@ -6,11 +6,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:morning_web/components/error_dialog.dart';
+import 'package:morning_web/pages/loading_page.dart';
 import 'package:morning_web/providers/providers.dart';
 import 'package:morning_web/repository/checkin.dart';
 import 'package:morning_web/utils/ip_address.dart';
 import 'package:morning_web/utils/location.dart';
-import 'package:morning_web/checkin/condition_status.dart';
+import 'package:morning_web/checkin/checkin_status.dart';
 import 'package:morning_web/utils/screen_size.dart';
 import 'package:sprung/sprung.dart';
 
@@ -36,8 +37,6 @@ class _HomePageState extends ConsumerState<HomePage>
 
   bool _checkInLoading = false;
 
-  double _rippleSize = 0;
-
   late final AnimationController _bottonRippleAnimController;
   late final AnimationController _rippleTransitionAnimController;
   late final Animation<double> _rippleTransitionAnimation;
@@ -51,18 +50,16 @@ class _HomePageState extends ConsumerState<HomePage>
     )..repeat();
 
     _rippleTransitionAnimController = AnimationController(
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
-
-    // Stop the animation at first
     _rippleTransitionAnimation = Tween<double>(
       begin: 0,
-      end: max(ScreenSize.width, ScreenSize.height) * 2,
+      end: max(ScreenSize.width, ScreenSize.height) * 1.5,
     ).animate(
       CurvedAnimation(
         parent: _rippleTransitionAnimController,
-        curve: Curves.fastOutSlowIn,
+        curve: Curves.easeInOutCirc,
       ),
     );
 
@@ -107,19 +104,19 @@ class _HomePageState extends ConsumerState<HomePage>
               clipBehavior: Clip.none,
               alignment: Alignment.topCenter,
               children: [
-                Positioned(
-                  right: -130,
-                  top: -120,
-                  child: AnimatedOpacity(
-                    duration: const Duration(milliseconds: 1000),
-                    opacity: _bgOpacity,
-                    child: Image.asset(
-                      "assets/images/yellow-circle.png",
-                      width: 280,
-                      height: 280,
-                    ),
-                  ),
-                ),
+                // Positioned(
+                //   right: -130,
+                //   top: -120,
+                //   child: AnimatedOpacity(
+                //     duration: const Duration(milliseconds: 1000),
+                //     opacity: _bgOpacity,
+                //     child: Image.asset(
+                //       "assets/images/yellow-circle.png",
+                //       width: 280,
+                //       height: 280,
+                //     ),
+                //   ),
+                // ),
                 BackdropFilter(
                   filter: ImageFilter.blur(
                     sigmaX: 30,
@@ -446,9 +443,9 @@ class _HomePageState extends ConsumerState<HomePage>
             child: Container(
               width: 1,
               height: 1,
-              decoration: ShapeDecoration(
+              decoration: const ShapeDecoration(
                 shape: CircleBorder(),
-                color: Colors.red.withOpacity(0.5),
+                color: morningBlue,
               ),
             ),
           ),
@@ -558,11 +555,21 @@ class _HomePageState extends ConsumerState<HomePage>
   }
 
   Future<void> _checkInAndPush() async {
-    _rippleTransitionAnimController.forward();
-    return;
     setState(() {
       _checkInLoading = true;
     });
+
+    _rippleTransitionAnimController.forward();
+
+    await Future.delayed(const Duration(milliseconds: 1000));
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => const CheckInLoadingPage(),
+      ),
+    );
+
+    return;
 
     print("チェックイン処理を開始");
 

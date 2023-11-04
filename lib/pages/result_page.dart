@@ -180,7 +180,10 @@ class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
                     ),
                     PrimaryButton(
                       onTap: () {
-                        Navigator.of(context).pushReplacementNamed("/");
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                          "/",
+                          (Route<dynamic> route) => false,
+                        );
                       },
                       text: "OK",
                       width: 140,

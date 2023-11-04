@@ -7,7 +7,7 @@ import 'package:morning_web/providers/providers.dart';
 import 'package:morning_web/utils/ip_address.dart';
 
 import '../utils/location.dart';
-import 'condition_status.dart';
+import 'checkin_status.dart';
 
 Future<NetworkStatus> checkNetworkStatus(
   Ref ref,
