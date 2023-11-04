@@ -20,6 +20,7 @@ dependencies:
   intl: ^0.18.1
   lottie: ^2.7.0
   shared_preferences: ^2.2.2
+  sprung: ^3.0.1
 
 dev_dependencies:
   flutter_test:
