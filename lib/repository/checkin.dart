@@ -10,7 +10,7 @@ class CheckInRepository {
 
   final String _apiKey = dotenv.env["MORNING_API_KEY"]!;
 
-  Future<CheckInResult> checkIn(
+  Future<CheckInResult> post(
     String email,
     String ipAddress,
     double latitude,

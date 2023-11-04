@@ -5,10 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:morning_web/components/error_dialog.dart';
+import 'package:morning_web/checkin/checkin_verification.dart';
 import 'package:morning_web/pages/loading_page.dart';
 import 'package:morning_web/providers/providers.dart';
-import 'package:morning_web/repository/checkin.dart';
 import 'package:morning_web/utils/ip_address.dart';
 import 'package:morning_web/utils/location.dart';
 import 'package:morning_web/checkin/checkin_status.dart';
@@ -50,7 +49,7 @@ class _HomePageState extends ConsumerState<HomePage>
     )..repeat();
 
     _rippleTransitionAnimController = AnimationController(
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 800),
       vsync: this,
     );
     _rippleTransitionAnimation = Tween<double>(
@@ -475,7 +474,7 @@ class _HomePageState extends ConsumerState<HomePage>
             if (!enabled || _checkInLoading) {
               return;
             }
-            _checkInAndPush();
+            _startCheckInAndPush();
           },
           child: _checkInLoading
               ? const SizedBox(
@@ -554,63 +553,25 @@ class _HomePageState extends ConsumerState<HomePage>
     );
   }
 
-  Future<void> _checkInAndPush() async {
+  Future<void> _startCheckInAndPush() async {
     setState(() {
       _checkInLoading = true;
     });
-
+    ref.read(checkInProcessStatusProvider.notifier).state =
+        CheckInProcessStatus.notStarted;
     _rippleTransitionAnimController.forward();
 
-    await Future.delayed(const Duration(milliseconds: 1000));
+    await Future.delayed(const Duration(milliseconds: 700));
+
+    checkIn(context, ref);
 
     Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => const CheckInLoadingPage(),
+      PageRouteBuilder(
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
+        pageBuilder: (_, __, ___) => const CheckInLoadingPage(),
       ),
     );
-
     return;
-
-    print("チェックイン処理を開始");
-
-    final email = ref.read(userEmailProvider)!;
-    print("IPアドレスを取得中...");
-    final ipAddress = await getIPAddress();
-    print("位置情報を取得中...");
-    final currentPosition = await getCurrentPosition();
-
-    try {
-      final result = await CheckInRepository().checkIn(
-        email,
-        ipAddress,
-        currentPosition.latitude,
-        currentPosition.longitude,
-      );
-      print("Check-in result: $result");
-      ref.read(checkInResultProvider.notifier).state = result;
-    } on Exception catch (error) {
-      showDialog(
-        context: context,
-        builder: (_) {
-          return MorningErrorDialog(
-            title: "チェックインに失敗しました",
-            message: error.toString(),
-          );
-        },
-      );
-      setState(() {
-        _checkInLoading = false;
-      });
-
-      // 場所を再取得することで、ステータスを再評価 -> 画面更新
-      ref.invalidate(checkInPlacesProvider);
-
-      return;
-    }
-
-    setState(() {
-      _checkInLoading = false;
-    });
-    Navigator.pushNamed(context, "/result");
   }
 }

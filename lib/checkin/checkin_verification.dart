@@ -1,11 +1,14 @@
 import 'dart:math';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:morning_web/models/place.dart';
 import 'package:morning_web/providers/providers.dart';
 import 'package:morning_web/utils/ip_address.dart';
 
+import '../components/error_dialog.dart';
+import '../repository/checkin.dart';
 import '../utils/location.dart';
 import 'checkin_status.dart';
 
@@ -75,5 +78,62 @@ Future<LocationStatus> checkLocationStatus(
     return LocationStatus.outOfRange;
   } else {
     return LocationStatus.withinRange;
+  }
+}
+
+Future<void> checkIn(BuildContext context, WidgetRef ref) async {
+  print("チェックイン処理を開始");
+  final email = ref.read(userEmailProvider)!;
+
+  ref.read(checkInProcessStatusProvider.notifier).state =
+      CheckInProcessStatus.fetchingNetwork;
+  print("IPアドレスを取得中...");
+  final ipAddress = await getIPAddress();
+  await Future.delayed(const Duration(milliseconds: 700));
+
+  ref.read(checkInProcessStatusProvider.notifier).state =
+      CheckInProcessStatus.fetchingLocation;
+  print("位置情報を取得中...");
+  final currentPosition = await getCurrentPosition();
+  await Future.delayed(const Duration(milliseconds: 700));
+
+  ref.read(checkInProcessStatusProvider.notifier).state =
+      CheckInProcessStatus.connectingToServer;
+  print("サーバーと通信中...");
+  await Future.delayed(const Duration(milliseconds: 700));
+
+  try {
+    final result = await CheckInRepository().post(
+      email,
+      ipAddress,
+      currentPosition.latitude,
+      currentPosition.longitude,
+    );
+    print("Check-in result: $result");
+
+    ref.read(checkInResultProvider.notifier).state = result;
+    ref.read(checkInProcessStatusProvider.notifier).state =
+        CheckInProcessStatus.done;
+
+    Navigator.pushNamed(context, "/result");
+  } on Exception catch (error) {
+    // 場所を再取得することで、ステータスを再評価 -> 画面更新
+    ref.invalidate(checkInPlacesProvider);
+
+    await showDialog(
+      context: context,
+      builder: (_) {
+        return MorningErrorDialog(
+          title: "チェックインに失敗しました",
+          message: error.toString(),
+        );
+      },
+    );
+
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      "/",
+      (_) => false,
+    );
   }
 }

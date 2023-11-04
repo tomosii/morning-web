@@ -182,7 +182,7 @@ class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
                       onTap: () {
                         Navigator.of(context).pushNamedAndRemoveUntil(
                           "/",
-                          (Route<dynamic> route) => false,
+                          (_) => false,
                         );
                       },
                       text: "OK",

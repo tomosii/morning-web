@@ -91,3 +91,7 @@ final locationDistanceProvider = StateProvider<double>((ref) {
 final locationNameProvider = StateProvider<String>((ref) {
   return "";
 });
+
+final checkInProcessStatusProvider = StateProvider<CheckInProcessStatus>((ref) {
+  return CheckInProcessStatus.notStarted;
+});
