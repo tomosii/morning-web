@@ -90,14 +90,20 @@ Future<void> checkIn(BuildContext context, WidgetRef ref) async {
   print("IPアドレスを取得中...");
   final ipAddress = await getIPAddress();
 
+  await Future.delayed(Duration(milliseconds: 1200));
+
   ref.read(checkInProcessStatusProvider.notifier).state =
       CheckInProcessStatus.fetchingLocation;
   print("位置情報を取得中...");
   final currentPosition = await getCurrentPosition();
 
+  await Future.delayed(Duration(milliseconds: 1200));
+
   ref.read(checkInProcessStatusProvider.notifier).state =
       CheckInProcessStatus.connectingToServer;
   print("サーバーと通信中...");
+
+  await Future.delayed(Duration(milliseconds: 1200));
 
   try {
     final result = await CheckInRepository().post(

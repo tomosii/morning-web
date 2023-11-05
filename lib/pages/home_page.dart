@@ -49,12 +49,12 @@ class _HomePageState extends ConsumerState<HomePage>
     )..repeat();
 
     _rippleTransitionAnimController = AnimationController(
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 700),
       vsync: this,
     );
     _rippleTransitionAnimation = Tween<double>(
       begin: 0,
-      end: max(ScreenSize.width, ScreenSize.height) * 1.5,
+      end: max(ScreenSize.width, ScreenSize.height) * 2,
     ).animate(
       CurvedAnimation(
         parent: _rippleTransitionAnimController,
@@ -565,11 +565,16 @@ class _HomePageState extends ConsumerState<HomePage>
 
     checkIn(context, ref);
 
+    // Use FadeTransitionn
     Navigator.of(context).push(
       PageRouteBuilder(
-        transitionDuration: Duration.zero,
-        reverseTransitionDuration: Duration.zero,
-        pageBuilder: (_, __, ___) => const CheckInLoadingPage(),
+        transitionDuration: const Duration(milliseconds: 500),
+        pageBuilder: (BuildContext context, animation, secondaryAnimation) {
+          return FadeTransition(
+            opacity: animation,
+            child: const CheckInLoadingPage(),
+          );
+        },
       ),
     );
     return;

@@ -64,13 +64,13 @@ class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage> {
   void initState() {
     super.initState();
 
-    Future.delayed(const Duration(milliseconds: 100), () {
+    Future.delayed(const Duration(milliseconds: 0), () {
       setState(() {
         _bgGradient = _gradients.last;
       });
     });
 
-    _timer = Timer.periodic(const Duration(milliseconds: 800), (timer) {
+    _timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
       setState(() {
         _bgGradient = _gradients[timer.tick % _gradients.length];
       });
@@ -90,7 +90,7 @@ class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage> {
     return Scaffold(
       backgroundColor: morningBlue,
       body: AnimatedContainer(
-        duration: const Duration(milliseconds: 600),
+        duration: const Duration(milliseconds: 400),
         decoration: BoxDecoration(
           gradient: _bgGradient,
         ),
@@ -106,7 +106,7 @@ class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage> {
             ),
             child: Container(
               margin: const EdgeInsets.only(top: 120),
-              height: 220,
+              height: 200,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,7 +163,7 @@ class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage> {
         ),
         AnimatedOpacity(
           opacity: loading ? 1 : 0,
-          duration: const Duration(milliseconds: 600),
+          duration: const Duration(milliseconds: 500),
           child: Text(
             text,
             style: const TextStyle(
