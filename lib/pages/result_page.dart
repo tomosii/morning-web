@@ -83,7 +83,8 @@ class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
                 // fromat current datetime
                 child: Text(
                   DateFormat("yyyy/MM/dd HH:mm").format(DateTime.now()),
-                  style: GoogleFonts.inter(
+                  style: const TextStyle(
+                    fontFamily: "Inter",
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
                     color: Colors.grey,

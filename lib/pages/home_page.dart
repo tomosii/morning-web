@@ -162,6 +162,9 @@ class _HomePageState extends ConsumerState<HomePage>
                               height: 100,
                             ),
                             _debugInfo(),
+                            const SizedBox(
+                              height: 30,
+                            ),
                           ],
                         ),
                       ),
@@ -202,7 +205,8 @@ class _HomePageState extends ConsumerState<HomePage>
               children: [
                 Text(
                   "${now.year}年${now.month}月${now.day}日 (${getJPTodayDayOfWeek()})",
-                  style: GoogleFonts.inter(
+                  style: TextStyle(
+                    fontFamily: "Inter",
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
                     color: Colors.black.withOpacity(0.4),
@@ -214,7 +218,8 @@ class _HomePageState extends ConsumerState<HomePage>
                 ),
                 Text(
                   "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}",
-                  style: GoogleFonts.inter(
+                  style: TextStyle(
+                    fontFamily: "Inter",
                     fontSize: 34,
                     fontWeight: FontWeight.w700,
                     color: Colors.black.withOpacity(0.7),
