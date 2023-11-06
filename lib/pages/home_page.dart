@@ -49,7 +49,7 @@ class _HomePageState extends ConsumerState<HomePage>
     )..repeat();
 
     _rippleTransitionAnimController = AnimationController(
-      duration: const Duration(milliseconds: 700),
+      duration: const Duration(milliseconds: 800),
       vsync: this,
     );
     _rippleTransitionAnimation = Tween<double>(
@@ -121,42 +121,49 @@ class _HomePageState extends ConsumerState<HomePage>
                     sigmaX: 30,
                     sigmaY: 30,
                   ),
-                  child: SingleChildScrollView(
-                    clipBehavior: Clip.none,
-                    // physics: const AlwaysScrollableScrollPhysics(),
-                    padding: EdgeInsets.zero,
-                    child: Container(
-                      alignment: Alignment.topCenter,
-                      constraints: const BoxConstraints(
-                        maxWidth: 400,
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 28,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          _logo(),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          _currentDateAndTime(),
-                          const SizedBox(
-                            height: 40,
-                          ),
-                          _statusPanel(),
-                          const SizedBox(
-                            height: 100,
-                          ),
-                          _showCheckInButton(),
-                          const SizedBox(
-                            height: 100,
-                          ),
-                          _debugInfo(),
-                        ],
+                  child: RefreshIndicator(
+                    onRefresh: () async {
+                      // 場所を再取得することで、ステータスを再評価 -> 画面更新
+                      ref.invalidate(checkInPlacesProvider);
+                      await Future.delayed(const Duration(milliseconds: 500));
+                    },
+                    child: SingleChildScrollView(
+                      clipBehavior: Clip.none,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: EdgeInsets.zero,
+                      child: Container(
+                        alignment: Alignment.topCenter,
+                        constraints: const BoxConstraints(
+                          maxWidth: 400,
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 28,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            _logo(),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            _currentDateAndTime(),
+                            const SizedBox(
+                              height: 40,
+                            ),
+                            _statusPanel(),
+                            const SizedBox(
+                              height: 100,
+                            ),
+                            _showCheckInButton(),
+                            const SizedBox(
+                              height: 100,
+                            ),
+                            _debugInfo(),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -559,6 +566,9 @@ class _HomePageState extends ConsumerState<HomePage>
     });
     ref.read(checkInProcessStatusProvider.notifier).state =
         CheckInProcessStatus.notStarted;
+
+    await Future.delayed(const Duration(milliseconds: 300));
+
     _rippleTransitionAnimController.forward();
 
     await Future.delayed(const Duration(milliseconds: 700));

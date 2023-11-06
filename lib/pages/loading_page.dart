@@ -90,7 +90,7 @@ class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage> {
     return Scaffold(
       backgroundColor: morningBlue,
       body: AnimatedContainer(
-        duration: const Duration(milliseconds: 400),
+        duration: const Duration(milliseconds: 500),
         decoration: BoxDecoration(
           gradient: _bgGradient,
         ),
