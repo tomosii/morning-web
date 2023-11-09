@@ -34,7 +34,20 @@ class CheckInRepository {
     if (response.statusCode != 200) {
       print("チェックインに失敗: ${response.statusCode}, ${response.body}");
       final detail = jsonDecode(response.body)["detail"];
-      throw CheckInException(detail);
+      switch (detail) {
+        case "User not found.":
+          throw UserNotFoundException();
+        case "User doesn't have a commitment today.":
+          throw NotCommittedException();
+        case "Already checked in today.":
+          throw AlreadyCheckedInException();
+        case "IP address not matched with any place.":
+          throw InvalidIpAddressException();
+        case "Out of range of the check-in area.":
+          throw InvalidPlaceException();
+        default:
+          throw CheckInException(detail);
+      }
     }
 
     final data = jsonDecode(response.body);

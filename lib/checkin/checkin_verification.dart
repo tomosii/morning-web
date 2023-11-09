@@ -10,6 +10,7 @@ import 'package:morning_web/utils/ip_address.dart';
 import '../components/error_dialog.dart';
 import '../repository/checkin.dart';
 import '../utils/location.dart';
+import 'checkin_exception.dart';
 import 'checkin_status.dart';
 
 Future<NetworkStatus> checkNetworkStatus(
@@ -130,10 +131,38 @@ Future<void> checkIn(BuildContext context, WidgetRef ref) async {
     await showDialog(
       context: context,
       builder: (_) {
-        return MorningErrorDialog(
-          title: "チェックインに失敗しました",
-          message: error.toString(),
-        );
+        switch (error.runtimeType) {
+          case UserNotFoundException:
+            return MorningErrorDialog(
+              title: "チェックインに失敗しました",
+              message: "ユーザーが見つかりませんでした。",
+            );
+          case AlreadyCheckedInException:
+            return MorningErrorDialog(
+              title: "チェックインに失敗しました",
+              message: "本日は既にチェックイン済みです。",
+            );
+          case InvalidIpAddressException:
+            return MorningErrorDialog(
+              title: "チェックインに失敗しました",
+              message: "IPアドレスが一致しませんでした。",
+            );
+          case InvalidPlaceException:
+            return MorningErrorDialog(
+              title: "チェックインに失敗しました",
+              message: "チェックインエリア外です。",
+            );
+          case NotCommittedException:
+            return MorningErrorDialog(
+              title: "チェックインに失敗しました",
+              message: "本日は朝活に参加していません。",
+            );
+          default:
+            return MorningErrorDialog(
+              title: "チェックインに失敗しました",
+              message: error.toString(),
+            );
+        }
       },
     );
 
