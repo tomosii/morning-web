@@ -22,11 +22,6 @@ void main() async {
   );
   usePathUrlStrategy();
   await dotenv.load(fileName: "env");
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-    ),
-  );
 
   runApp(
     ProviderScope(
