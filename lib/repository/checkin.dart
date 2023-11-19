@@ -45,6 +45,8 @@ class CheckInRepository {
           throw InvalidIpAddressException();
         case "Out of range of the check-in area.":
           throw InvalidPlaceException();
+        case "Check-in is not available at this hour.":
+          throw OutOfHoursException();
         default:
           throw CheckInException(detail);
       }

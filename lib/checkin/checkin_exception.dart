@@ -27,3 +27,7 @@ class InvalidPlaceException implements Exception {
 class NotCommittedException implements Exception {
   NotCommittedException();
 }
+
+class OutOfHoursException implements Exception {
+  OutOfHoursException();
+}

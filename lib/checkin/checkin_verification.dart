@@ -157,6 +157,11 @@ Future<void> checkIn(BuildContext context, WidgetRef ref) async {
               title: "チェックインに失敗しました",
               message: "本日は朝活に参加していません。",
             );
+          case OutOfHoursException:
+            return MorningErrorDialog(
+              title: "チェックインに失敗しました",
+              message: "チェックイン可能時間外です。",
+            );
           default:
             return MorningErrorDialog(
               title: "チェックインに失敗しました",
