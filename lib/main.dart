@@ -17,10 +17,12 @@ import 'utils/screen_size.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  print("Loading Firebase...");
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   usePathUrlStrategy();
+  print("Loading .env file...");
   await dotenv.load(fileName: "env");
 
   runApp(
