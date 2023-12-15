@@ -184,8 +184,10 @@ class _HomePageState extends ConsumerState<HomePage>
       duration: const Duration(milliseconds: 1600),
       opacity: _headerOpacity,
       child: Image.asset(
-        'assets/images/morning-logo.png',
-        height: 45,
+        // 'assets/images/morning-logo.png',
+        "assets/images/morning-logo-christmas.png",
+        // height: 45,
+        height: 70,
       ),
     );
   }
@@ -421,7 +423,8 @@ class _HomePageState extends ConsumerState<HomePage>
                   child: CustomPaint(
                     painter: CircleRipplePainter(
                       _bottonRippleAnimController,
-                      color: morningBlue,
+                      // color: morningBlue,
+                      color: Colors.redAccent,
                     ),
                     child: const SizedBox(
                       width: 160,
@@ -454,9 +457,10 @@ class _HomePageState extends ConsumerState<HomePage>
             child: Container(
               width: 1,
               height: 1,
-              decoration: const ShapeDecoration(
+              decoration: ShapeDecoration(
                 shape: CircleBorder(),
-                color: morningBlue,
+                // color: morningBlue,
+                color: Colors.green[600]!,
               ),
             ),
           ),
@@ -489,18 +493,31 @@ class _HomePageState extends ConsumerState<HomePage>
             _startCheckInAndPush();
           },
           child: _checkInLoading
-              ? const SizedBox(
+              ? SizedBox(
                   width: 30,
                   height: 30,
                   child: CircularProgressIndicator(
-                    color: morningBlue,
+                    // color: morningBlue,
+                    color: Colors.green[600]!,
                     strokeWidth: 3,
                   ),
                 )
-              : Icon(
-                  Icons.brightness_7,
-                  color: enabled ? morningBlue : Colors.black.withOpacity(0.2),
-                  size: 35,
+              // : Icon(
+              //     Icons.brightness_7,
+              //     color: enabled ? morningBlue : Colors.black.withOpacity(0.2),
+              //     size: 35,
+              : ClipRect(
+                  child: ColorFiltered(
+                    colorFilter: ColorFilter.mode(
+                      enabled ? Colors.transparent : Colors.white,
+                      BlendMode.saturation,
+                    ),
+                    child: Image.asset(
+                      "assets/images/bell.png",
+                      width: 35,
+                      height: 35,
+                    ),
+                  ),
                 ),
         ),
       ),

@@ -20,40 +20,74 @@ class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage> {
 
   LinearGradient _bgGradient = const LinearGradient(
     colors: [
-      morningBlue,
-      morningBlue,
+      // morningBlue,
+      // morningBlue,
+      Colors.green,
+      Colors.green,
     ],
   );
 
   final List<LinearGradient> _gradients = [
-    const LinearGradient(
+    // const LinearGradient(
+    //   colors: [
+    //     morningBlue,
+    //     Color(0xFF3DAFE0),
+    //   ],
+    //   begin: Alignment.topLeft,
+    //   end: Alignment.bottomRight,
+    // ),
+    // const LinearGradient(
+    //   colors: [
+    //     morningBlue,
+    //     Color(0xFF3DAFE0),
+    //   ],
+    //   begin: Alignment.topRight,
+    //   end: Alignment.bottomLeft,
+    // ),
+    // const LinearGradient(
+    //   colors: [
+    //     morningBlue,
+    //     Color(0xFF3D74E0),
+    //   ],
+    //   begin: Alignment.bottomRight,
+    //   end: Alignment.topLeft,
+    // ),
+    // const LinearGradient(
+    //   colors: [
+    //     morningBlue,
+    //     Color(0xFF3D74E0),
+    //   ],
+    //   begin: Alignment.bottomLeft,
+    //   end: Alignment.topRight,
+    // ),
+    LinearGradient(
       colors: [
-        morningBlue,
-        Color(0xFF3DAFE0),
+        Colors.green[800]!,
+        Colors.green,
       ],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     ),
-    const LinearGradient(
+    LinearGradient(
       colors: [
-        morningBlue,
-        Color(0xFF3DAFE0),
+        Colors.green,
+        Colors.green[800]!,
       ],
       begin: Alignment.topRight,
       end: Alignment.bottomLeft,
     ),
     const LinearGradient(
       colors: [
-        morningBlue,
-        Color(0xFF3D74E0),
+        Colors.green,
+        Colors.greenAccent,
       ],
       begin: Alignment.bottomRight,
       end: Alignment.topLeft,
     ),
     const LinearGradient(
       colors: [
-        morningBlue,
-        Color(0xFF3D74E0),
+        Colors.green,
+        Colors.greenAccent,
       ],
       begin: Alignment.bottomLeft,
       end: Alignment.topRight,
