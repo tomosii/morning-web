@@ -151,6 +151,13 @@ class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage> {
                         CheckInProcessStatus.fetchingNetwork.index,
                     done: status.index >
                         CheckInProcessStatus.fetchingNetwork.index,
+                    completeWidget: Transform.rotate(
+                      angle: -0.2,
+                      child: Image.asset(
+                        "assets/images/christmas-ball1.png",
+                        width: 24,
+                      ),
+                    ),
                   ),
                   _statusRow(
                     text: "現在地を取得中...",
@@ -158,6 +165,13 @@ class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage> {
                         CheckInProcessStatus.fetchingLocation.index,
                     done: status.index >
                         CheckInProcessStatus.fetchingLocation.index,
+                    completeWidget: Transform.rotate(
+                      angle: 0.5,
+                      child: Image.asset(
+                        "assets/images/christmas-ball2.png",
+                        width: 24,
+                      ),
+                    ),
                   ),
                   _statusRow(
                     text: "サーバーと通信中...",
@@ -165,6 +179,13 @@ class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage> {
                         CheckInProcessStatus.connectingToServer.index,
                     done: status.index >
                         CheckInProcessStatus.connectingToServer.index,
+                    completeWidget: Transform.rotate(
+                      angle: -0.1,
+                      child: Image.asset(
+                        "assets/images/christmas-ball3.png",
+                        width: 24,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -179,6 +200,7 @@ class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage> {
     required String text,
     required bool loading,
     required bool done,
+    Widget? completeWidget,
   }) {
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -186,11 +208,12 @@ class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage> {
         AnimatedOpacity(
           opacity: done ? 1 : 0,
           duration: const Duration(milliseconds: 400),
-          child: Icon(
-            Icons.check_rounded,
-            color: Colors.white.withOpacity(0.7),
-            size: 24,
-          ),
+          // child: Icon(
+          //   Icons.check_rounded,
+          //   color: Colors.white.withOpacity(0.7),
+          //   size: 24,
+          // ),
+          child: completeWidget!,
         ),
         const SizedBox(
           width: 20,
