@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:morning_web/components/primary_button.dart';
 import 'package:intl/intl.dart';
 import 'package:morning_web/providers/providers.dart';
+import 'package:sprung/sprung.dart';
 
 import '../../constants/colors.dart';
 
@@ -22,14 +23,34 @@ class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
   double _placeOpacity = 0;
   double _timeOpacity = 0;
   double _messageOpacity = 0;
+  double _imageOpacity = 0;
+  double _imageScale = 0;
 
   late ConfettiController _confettiController;
+
+  final List<String> _images = [
+    "assets/images/christmas-tree.png",
+    "assets/images/cookie.png",
+    "assets/images/sock.png",
+    "assets/images/snow-globe.png",
+    "assets/images/present.png",
+    "assets/images/snow-globe.png",
+    "assets/images/cookie.png",
+  ];
+
+  int _imageIndex = 0;
 
   @override
   void initState() {
     super.initState();
+
+    _imageIndex = DateTime.now().weekday - 1;
+    if (_imageIndex >= _images.length) {
+      _imageIndex = 0;
+    }
+
     _confettiController =
-        ConfettiController(duration: const Duration(seconds: 10));
+        ConfettiController(duration: const Duration(milliseconds: 1000));
     Future.delayed(const Duration(milliseconds: 1000), () {
       _confettiController.play();
     });
@@ -49,6 +70,13 @@ class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
     Future.delayed(const Duration(milliseconds: 1500), () {
       setState(() {
         _messageOpacity = 1;
+      });
+    });
+
+    Future.delayed(const Duration(milliseconds: 2000), () {
+      setState(() {
+        _imageOpacity = 1;
+        _imageScale = 1;
       });
     });
   }
@@ -78,6 +106,19 @@ class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
               const SizedBox(
                 height: 20,
               ),
+              ConfettiWidget(
+                confettiController: _confettiController,
+                numberOfParticles: 4,
+                emissionFrequency: 0.07,
+                blastDirectionality: BlastDirectionality.directional,
+                blastDirection: -pi / 2,
+                shouldLoop: false,
+                maxBlastForce: 10,
+                colors: const [
+                  Colors.green,
+                  Colors.red,
+                ],
+              ),
               Container(
                 alignment: Alignment.centerRight,
                 // fromat current datetime
@@ -92,7 +133,7 @@ class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
                 ),
               ),
               const SizedBox(
-                height: 70,
+                height: 40,
               ),
               AnimatedOpacity(
                 duration: const Duration(milliseconds: 1000),
@@ -108,7 +149,7 @@ class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
                       height: 5,
                     ),
                     Text(
-                      checkInResult.placeName ?? "",
+                      checkInResult.placeName ?? "None",
                       style: GoogleFonts.montserrat(
                         fontSize: 47,
                         fontWeight: FontWeight.w700,
@@ -137,7 +178,26 @@ class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
                 ),
               ),
               const SizedBox(
-                height: 100,
+                height: 30,
+              ),
+              AnimatedScale(
+                duration: const Duration(milliseconds: 2600),
+                scale: _imageScale,
+                curve: Sprung.overDamped,
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 1000),
+                  opacity: _imageOpacity,
+                  child: Transform.rotate(
+                    angle: -0.15,
+                    child: Image.asset(
+                      _images[_imageIndex],
+                      height: 140,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 40,
               ),
               AnimatedOpacity(
                 duration: const Duration(milliseconds: 1000),
@@ -177,7 +237,7 @@ class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
                       ],
                     ),
                     const SizedBox(
-                      height: 80,
+                      height: 60,
                     ),
                     PrimaryButton(
                       onTap: () {
