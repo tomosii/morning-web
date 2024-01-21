@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:morning_web/checkin/checkin_status.dart';
@@ -20,78 +19,79 @@ class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage> {
 
   LinearGradient _bgGradient = const LinearGradient(
     colors: [
-      // morningBlue,
-      // morningBlue,
-      Colors.green,
-      Colors.green,
+      morningBlue,
+      morningBlue,
+      // Colors.green,
+      // Colors.green,
     ],
   );
 
   final List<LinearGradient> _gradients = [
-    // const LinearGradient(
-    //   colors: [
-    //     morningBlue,
-    //     Color(0xFF3DAFE0),
-    //   ],
-    //   begin: Alignment.topLeft,
-    //   end: Alignment.bottomRight,
-    // ),
-    // const LinearGradient(
-    //   colors: [
-    //     morningBlue,
-    //     Color(0xFF3DAFE0),
-    //   ],
-    //   begin: Alignment.topRight,
-    //   end: Alignment.bottomLeft,
-    // ),
-    // const LinearGradient(
-    //   colors: [
-    //     morningBlue,
-    //     Color(0xFF3D74E0),
-    //   ],
-    //   begin: Alignment.bottomRight,
-    //   end: Alignment.topLeft,
-    // ),
-    // const LinearGradient(
-    //   colors: [
-    //     morningBlue,
-    //     Color(0xFF3D74E0),
-    //   ],
-    //   begin: Alignment.bottomLeft,
-    //   end: Alignment.topRight,
-    // ),
-    LinearGradient(
+    const LinearGradient(
       colors: [
-        Colors.green[800]!,
-        Colors.green,
+        morningBlue,
+        Color(0xFF3DAFE0),
       ],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     ),
-    LinearGradient(
+    const LinearGradient(
       colors: [
-        Colors.green,
-        Colors.green[800]!,
+        morningBlue,
+        Color(0xFF3DAFE0),
       ],
       begin: Alignment.topRight,
       end: Alignment.bottomLeft,
     ),
     const LinearGradient(
       colors: [
-        Colors.green,
-        Colors.greenAccent,
+        morningBlue,
+        Color(0xFF3D74E0),
       ],
       begin: Alignment.bottomRight,
       end: Alignment.topLeft,
     ),
     const LinearGradient(
       colors: [
-        Colors.green,
-        Colors.greenAccent,
+        morningBlue,
+        Color(0xFF3D74E0),
       ],
       begin: Alignment.bottomLeft,
       end: Alignment.topRight,
     ),
+    // == Christmas ==
+    // LinearGradient(
+    //   colors: [
+    //     Colors.green[800]!,
+    //     Colors.green,
+    //   ],
+    //   begin: Alignment.topLeft,
+    //   end: Alignment.bottomRight,
+    // ),
+    // LinearGradient(
+    //   colors: [
+    //     Colors.green,
+    //     Colors.green[800]!,
+    //   ],
+    //   begin: Alignment.topRight,
+    //   end: Alignment.bottomLeft,
+    // ),
+    // const LinearGradient(
+    //   colors: [
+    //     Colors.green,
+    //     Colors.greenAccent,
+    //   ],
+    //   begin: Alignment.bottomRight,
+    //   end: Alignment.topLeft,
+    // ),
+    // const LinearGradient(
+    //   colors: [
+    //     Colors.green,
+    //     Colors.greenAccent,
+    //   ],
+    //   begin: Alignment.bottomLeft,
+    //   end: Alignment.topRight,
+    // ),
   ];
 
   @override
@@ -151,13 +151,13 @@ class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage> {
                         CheckInProcessStatus.fetchingNetwork.index,
                     done: status.index >
                         CheckInProcessStatus.fetchingNetwork.index,
-                    completeWidget: Transform.rotate(
-                      angle: -0.2,
-                      child: Image.asset(
-                        "assets/images/christmas-ball1.png",
-                        width: 24,
-                      ),
-                    ),
+                    // completeWidget: Transform.rotate(
+                    //   angle: -0.2,
+                    //   child: Image.asset(
+                    //     "assets/images/christmas-ball1.png",
+                    //     width: 24,
+                    //   ),
+                    // ),
                   ),
                   _statusRow(
                     text: "現在地を取得中...",
@@ -165,13 +165,13 @@ class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage> {
                         CheckInProcessStatus.fetchingLocation.index,
                     done: status.index >
                         CheckInProcessStatus.fetchingLocation.index,
-                    completeWidget: Transform.rotate(
-                      angle: 0.5,
-                      child: Image.asset(
-                        "assets/images/christmas-ball2.png",
-                        width: 24,
-                      ),
-                    ),
+                    // completeWidget: Transform.rotate(
+                    //   angle: 0.5,
+                    //   child: Image.asset(
+                    //     "assets/images/christmas-ball2.png",
+                    //     width: 24,
+                    //   ),
+                    // ),
                   ),
                   _statusRow(
                     text: "サーバーと通信中...",
@@ -179,13 +179,13 @@ class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage> {
                         CheckInProcessStatus.connectingToServer.index,
                     done: status.index >
                         CheckInProcessStatus.connectingToServer.index,
-                    completeWidget: Transform.rotate(
-                      angle: -0.1,
-                      child: Image.asset(
-                        "assets/images/christmas-ball3.png",
-                        width: 24,
-                      ),
-                    ),
+                    // completeWidget: Transform.rotate(
+                    //   angle: -0.1,
+                    //   child: Image.asset(
+                    //     "assets/images/christmas-ball3.png",
+                    //     width: 24,
+                    //   ),
+                    // ),
                   ),
                 ],
               ),
@@ -208,12 +208,12 @@ class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage> {
         AnimatedOpacity(
           opacity: done ? 1 : 0,
           duration: const Duration(milliseconds: 400),
-          // child: Icon(
-          //   Icons.check_rounded,
-          //   color: Colors.white.withOpacity(0.7),
-          //   size: 24,
-          // ),
-          child: completeWidget!,
+          child: completeWidget ??
+              Icon(
+                Icons.check_rounded,
+                color: Colors.white.withOpacity(0.7),
+                size: 24,
+              ),
         ),
         const SizedBox(
           width: 20,

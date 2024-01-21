@@ -50,7 +50,7 @@ class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
     }
 
     _confettiController =
-        ConfettiController(duration: const Duration(milliseconds: 1000));
+        ConfettiController(duration: const Duration(milliseconds: 1200));
     Future.delayed(const Duration(milliseconds: 1000), () {
       _confettiController.play();
     });
@@ -106,19 +106,23 @@ class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
               const SizedBox(
                 height: 20,
               ),
-              ConfettiWidget(
-                confettiController: _confettiController,
-                numberOfParticles: 4,
-                emissionFrequency: 0.07,
-                blastDirectionality: BlastDirectionality.directional,
-                blastDirection: -pi / 2,
-                shouldLoop: false,
-                maxBlastForce: 10,
-                colors: const [
-                  Colors.green,
-                  Colors.red,
-                ],
-              ),
+              if ((checkInResult.timeDifferenceSeconds ?? 0) <= 0)
+                ConfettiWidget(
+                  confettiController: _confettiController,
+                  numberOfParticles: 6,
+                  emissionFrequency: 0.07,
+                  blastDirectionality: BlastDirectionality.directional,
+                  blastDirection: -pi / 2,
+                  shouldLoop: false,
+                  maxBlastForce: 10,
+                  colors: [
+                    morningBlue,
+                    Colors.amber[200]!,
+                    // Colors.orange[200]!,
+                    // Colors.green,
+                    // Colors.red,
+                  ],
+                ),
               Container(
                 alignment: Alignment.centerRight,
                 // fromat current datetime
@@ -177,25 +181,25 @@ class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 30,
-              ),
-              AnimatedScale(
-                duration: const Duration(milliseconds: 2600),
-                scale: _imageScale,
-                curve: Sprung.overDamped,
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 1000),
-                  opacity: _imageOpacity,
-                  child: Transform.rotate(
-                    angle: -0.15,
-                    child: Image.asset(
-                      _images[_imageIndex],
-                      height: 140,
-                    ),
-                  ),
-                ),
-              ),
+              // const SizedBox(
+              //   height: 30,
+              // ),
+              // AnimatedScale(
+              //   duration: const Duration(milliseconds: 2600),
+              //   scale: _imageScale,
+              //   curve: Sprung.overDamped,
+              //   child: AnimatedOpacity(
+              //     duration: const Duration(milliseconds: 1000),
+              //     opacity: _imageOpacity,
+              //     child: Transform.rotate(
+              //       angle: -0.15,
+              //       child: Image.asset(
+              //         _images[_imageIndex],
+              //         height: 140,
+              //       ),
+              //     ),
+              //   ),
+              // ),
               const SizedBox(
                 height: 40,
               ),
