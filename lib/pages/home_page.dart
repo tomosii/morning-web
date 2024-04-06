@@ -97,81 +97,76 @@ class _HomePageState extends ConsumerState<HomePage>
       body: Center(
         heightFactor: 1,
         child: Stack(
+          clipBehavior: Clip.none,
           alignment: Alignment.topCenter,
           children: [
-            Stack(
-              clipBehavior: Clip.none,
-              alignment: Alignment.topCenter,
-              children: [
-                Positioned(
-                  right: -150,
-                  top: -120,
-                  child: AnimatedOpacity(
-                    duration: const Duration(milliseconds: 1000),
-                    opacity: _bgOpacity,
-                    child: Image.asset(
-                      "assets/images/yellow-circle.png",
-                      width: 280,
-                      height: 280,
+            Positioned(
+              right: -150,
+              top: -120,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 1000),
+                opacity: _bgOpacity,
+                child: Image.asset(
+                  "assets/images/yellow-circle.png",
+                  width: 280,
+                  height: 280,
+                ),
+              ),
+            ),
+            BackdropFilter(
+              filter: ImageFilter.blur(
+                sigmaX: 24,
+                sigmaY: 24,
+              ),
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  // 場所を再取得することで、ステータスを再評価 -> 画面更新
+                  ref.invalidate(checkInPlacesProvider);
+                  await Future.delayed(const Duration(milliseconds: 500));
+                },
+                child: SingleChildScrollView(
+                  clipBehavior: Clip.none,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: EdgeInsets.zero,
+                  child: Container(
+                    alignment: Alignment.topCenter,
+                    constraints: const BoxConstraints(
+                      maxWidth: 400,
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 28,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        _logo(),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        _currentDateAndTime(),
+                        const SizedBox(
+                          height: 40,
+                        ),
+                        _statusPanel(),
+                        const SizedBox(
+                          height: 100,
+                        ),
+                        _showCheckInButton(),
+                        const SizedBox(
+                          height: 100,
+                        ),
+                        _debugInfo(),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                BackdropFilter(
-                  filter: ImageFilter.blur(
-                    sigmaX: 24,
-                    sigmaY: 24,
-                  ),
-                  child: RefreshIndicator(
-                    onRefresh: () async {
-                      // 場所を再取得することで、ステータスを再評価 -> 画面更新
-                      ref.invalidate(checkInPlacesProvider);
-                      await Future.delayed(const Duration(milliseconds: 500));
-                    },
-                    child: SingleChildScrollView(
-                      clipBehavior: Clip.none,
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: EdgeInsets.zero,
-                      child: Container(
-                        alignment: Alignment.topCenter,
-                        constraints: const BoxConstraints(
-                          maxWidth: 400,
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 28,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            _logo(),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            _currentDateAndTime(),
-                            const SizedBox(
-                              height: 40,
-                            ),
-                            _statusPanel(),
-                            const SizedBox(
-                              height: 100,
-                            ),
-                            _showCheckInButton(),
-                            const SizedBox(
-                              height: 100,
-                            ),
-                            _debugInfo(),
-                            const SizedBox(
-                              height: 30,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ],
         ),
@@ -491,7 +486,7 @@ class _HomePageState extends ConsumerState<HomePage>
             child: Container(
               width: 1,
               height: 1,
-              decoration: ShapeDecoration(
+              decoration: const ShapeDecoration(
                 shape: CircleBorder(),
                 color: morningBlue,
                 // color: Colors.green[600]!,
@@ -527,12 +522,12 @@ class _HomePageState extends ConsumerState<HomePage>
             _startCheckInAndPush();
           },
           child: _checkInLoading
-              ? SizedBox(
+              ? const SizedBox(
                   width: 30,
                   height: 30,
                   child: CircularProgressIndicator(
-                    // color: morningBlue,
-                    color: Colors.green[600]!,
+                    color: morningBlue,
+                    // color: Colors.green[600]!,
                     strokeWidth: 3,
                   ),
                 )

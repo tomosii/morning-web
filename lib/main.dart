@@ -33,6 +33,7 @@ void main() async {
         theme: ThemeData(
           primarySwatch: Colors.blue,
           fontFamily: "NotoSansJP",
+          useMaterial3: false,
         ),
         scrollBehavior: const MaterialScrollBehavior().copyWith(
           dragDevices: {
