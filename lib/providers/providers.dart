@@ -28,7 +28,8 @@ final localEmailProvider = FutureProvider<String?>((ref) async {
 final checkInPlacesProvider = FutureProvider<List<CheckInPlace>>((ref) async {
   final db = FirebaseFirestore.instance;
   try {
-    final snapshot = await db.collection("places").get();
+    final snapshot =
+        await db.collection("places").where("enabled", isEqualTo: true).get();
     final places = snapshot.docs.map((e) {
       return CheckInPlace.fromSnapshot(e);
     }).toList();
