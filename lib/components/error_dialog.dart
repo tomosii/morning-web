@@ -67,7 +67,7 @@ class MorningErrorDialog extends StatelessWidget {
                   fontSize: 13,
                   color: Colors.black.withOpacity(0.5),
                   fontWeight: FontWeight.w500,
-                  height: 1.5,
+                  height: 1.7,
                 ),
               ),
             ),

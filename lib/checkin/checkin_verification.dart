@@ -132,33 +132,33 @@ Future<void> checkIn(BuildContext context, WidgetRef ref) async {
       context: context,
       builder: (_) {
         switch (error.runtimeType) {
-          case UserNotFoundException:
-            return MorningErrorDialog(
+          case UserNotFoundException _:
+            return const MorningErrorDialog(
               title: "チェックインに失敗しました",
               message: "ユーザーが見つかりませんでした。",
             );
-          case AlreadyCheckedInException:
-            return MorningErrorDialog(
+          case AlreadyCheckedInException _:
+            return const MorningErrorDialog(
               title: "チェックインに失敗しました",
               message: "本日は既にチェックイン済みです。",
             );
-          case InvalidIpAddressException:
-            return MorningErrorDialog(
+          case InvalidIpAddressException _:
+            return const MorningErrorDialog(
               title: "チェックインに失敗しました",
               message: "IPアドレスが一致しませんでした。",
             );
-          case InvalidPlaceException:
-            return MorningErrorDialog(
+          case InvalidPlaceException _:
+            return const MorningErrorDialog(
               title: "チェックインに失敗しました",
               message: "チェックインエリア外です。",
             );
-          case NotCommittedException:
-            return MorningErrorDialog(
+          case NotCommittedException _:
+            return const MorningErrorDialog(
               title: "チェックインに失敗しました",
               message: "本日は朝活に参加していません。",
             );
-          case OutOfHoursException:
-            return MorningErrorDialog(
+          case OutOfHoursException _:
+            return const MorningErrorDialog(
               title: "チェックインに失敗しました",
               message: "チェックイン可能時間外です。",
             );

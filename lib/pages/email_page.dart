@@ -115,9 +115,10 @@ class _EmailPageState extends ConsumerState<EmailPage> {
       showDialog(
         context: context,
         builder: (_) {
-          return MorningErrorDialog(
+          return const MorningErrorDialog(
             title: "未登録のメールアドレスです",
-            message: "メールアドレスが間違っているか、登録されていません。\n未登録の場合は管理者に連絡してください。",
+            message:
+                "メールアドレスが間違っているか、登録されていません。\n初参加の方は登録が必要です。管理者（飯山）までご連絡ください。",
           );
         },
       );
