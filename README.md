@@ -4,18 +4,18 @@
 
 Development:
 ```
-fvm flutter run
+flutter run --web-renderer html -d chrome
 ```
 
 Release:
 ```
-fvm flutter run --web-renderer canvaskit --release
+flutter run --web-renderer html --release -d chrome
 ```
 
 ## Build
 
 ```
-fvm flutter build web --web-renderer canvaskit --release
+flutter build web --web-renderer html --release
 ```
 
 ## Deploy

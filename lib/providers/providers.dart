@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:morning_web/repository/checkin.dart';
 import 'package:morning_web/repository/firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../models/place.dart';
 import '../checkin/checkin_verification.dart';
@@ -25,7 +26,8 @@ final localEmailProvider = FutureProvider<String?>((ref) async {
   return email;
 });
 
-final checkInPlacesProvider = FutureProvider<List<CheckInPlace>>((ref) async {
+final checkInPlacesProvider =
+    FutureProvider.autoDispose<List<CheckInPlace>>((ref) async {
   final db = FirebaseFirestore.instance;
   try {
     final snapshot =
@@ -41,18 +43,21 @@ final checkInPlacesProvider = FutureProvider<List<CheckInPlace>>((ref) async {
   }
 });
 
-final networkStatusProvider = FutureProvider<NetworkStatus>((ref) async {
+final networkStatusProvider =
+    FutureProvider.autoDispose<NetworkStatus>((ref) async {
   final checkInPlaces = await ref.watch(checkInPlacesProvider.future);
   NetworkStatus status = await checkNetworkStatus(ref, checkInPlaces);
   return status;
 });
 
-final locationStatusProvider = FutureProvider<LocationStatus>((ref) async {
+final locationStatusProvider =
+    FutureProvider.autoDispose<LocationStatus>((ref) async {
   final checkInPlaces = await ref.watch(checkInPlacesProvider.future);
   return checkLocationStatus(ref, checkInPlaces);
 });
 
-final isCheckInAvailableProvider = FutureProvider<bool>((ref) async {
+final isCheckInAvailableProvider =
+    FutureProvider.autoDispose<bool>((ref) async {
   final networkStatus = await ref.watch(networkStatusProvider.future);
   final locationStatus = await ref.watch(locationStatusProvider.future);
 
@@ -92,4 +97,9 @@ final locationNameProvider = StateProvider<String>((ref) {
 
 final checkInProcessStatusProvider = StateProvider<CheckInProcessStatus>((ref) {
   return CheckInProcessStatus.notStarted;
+});
+
+final appVersionProvider = FutureProvider.autoDispose<String>((ref) async {
+  final packageInfo = await PackageInfo.fromPlatform();
+  return packageInfo.version;
 });

@@ -103,23 +103,23 @@ class _HomePageState extends ConsumerState<HomePage>
               clipBehavior: Clip.none,
               alignment: Alignment.topCenter,
               children: [
-                // Positioned(
-                //   right: -130,
-                //   top: -120,
-                //   child: AnimatedOpacity(
-                //     duration: const Duration(milliseconds: 1000),
-                //     opacity: _bgOpacity,
-                //     child: Image.asset(
-                //       "assets/images/yellow-circle.png",
-                //       width: 280,
-                //       height: 280,
-                //     ),
-                //   ),
-                // ),
+                Positioned(
+                  right: -150,
+                  top: -120,
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 1000),
+                    opacity: _bgOpacity,
+                    child: Image.asset(
+                      "assets/images/yellow-circle.png",
+                      width: 280,
+                      height: 280,
+                    ),
+                  ),
+                ),
                 BackdropFilter(
                   filter: ImageFilter.blur(
-                    sigmaX: 30,
-                    sigmaY: 30,
+                    sigmaX: 24,
+                    sigmaY: 24,
                   ),
                   child: RefreshIndicator(
                     onRefresh: () async {
@@ -180,14 +180,47 @@ class _HomePageState extends ConsumerState<HomePage>
   }
 
   Widget _logo() {
+    final appVersion = ref.watch(appVersionProvider);
     return AnimatedOpacity(
       duration: const Duration(milliseconds: 1600),
       opacity: _headerOpacity,
-      child: Image.asset(
-        'assets/images/morning-logo.png',
-        height: 45,
-        // "assets/images/morning-logo-christmas.png",
-        // height: 70,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Image.asset(
+            'assets/images/morning-logo.png',
+            height: 45,
+            // "assets/images/morning-logo-christmas.png",
+            // height: 70,
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: morningBgBlue,
+              borderRadius: BorderRadius.circular(5),
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 9,
+              vertical: 5,
+            ),
+            margin: const EdgeInsets.only(bottom: 7),
+            child: Text(
+              appVersion.when(
+                data: (version) => version,
+                loading: () => "0.0.0",
+                error: (error, stackTrace) => "0.0.0",
+              ),
+              style: GoogleFonts.inter(
+                color: morningFgBlue,
+                fontWeight: FontWeight.w400,
+                fontSize: 11,
+                height: 1.0,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
