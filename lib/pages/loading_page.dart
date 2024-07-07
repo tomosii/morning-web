@@ -114,7 +114,7 @@ class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage> {
       });
     });
 
-    Future.delayed(const Duration(milliseconds: 500), () {
+    Future.delayed(const Duration(milliseconds: 0), () {
       setState(() {
         _titleOpacity = 1;
       });
@@ -157,7 +157,7 @@ class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   AnimatedOpacity(
-                    duration: const Duration(milliseconds: 700),
+                    duration: const Duration(milliseconds: 800),
                     opacity: _titleOpacity,
                     child: const Text(
                       "チェックインしています",
@@ -172,12 +172,15 @@ class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage> {
                     height: 70,
                   ),
                   AnimatedOpacity(
-                    duration: const Duration(milliseconds: 700),
+                    duration: const Duration(milliseconds: 800),
                     opacity: _titleOpacity,
                     child: LoadingAnimationWidget.fourRotatingDots(
                       color: Colors.white,
                       size: 55,
                     ),
+                  ),
+                  const SizedBox(
+                    height: 100,
                   ),
                   // _statusRow(
                   //   text: "IPアドレスを取得中...",

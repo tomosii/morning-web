@@ -295,14 +295,14 @@ class _HomePageState extends ConsumerState<HomePage>
             ),
             child: Column(
               children: [
-                ref.watch(networkStatusProvider).when(
-                      data: (networkStatus) {
-                        if (networkStatus == NetworkStatus.valid) {
+                ref.watch(networkDetailProvider).when(
+                      data: (networkDetail) {
+                        if (networkDetail.status == NetworkStatus.valid) {
                           return _statusRow(
                             icon: Icons.wifi_rounded,
                             color: morningBlue,
                             text: "指定のネットワークに接続されています",
-                            detail: ref.watch(networkDestinationProvider),
+                            detail: networkDetail.name,
                           );
                         } else {
                           return _statusRow(
@@ -326,36 +326,34 @@ class _HomePageState extends ConsumerState<HomePage>
                 const SizedBox(
                   height: 14,
                 ),
-                ref.watch(locationStatusProvider).when(
-                      data: (locationStatus) {
-                        if (locationStatus == LocationStatus.withinRange) {
-                          String place = ref.watch(networkDestinationProvider);
-                          if (place == "") {
-                            place = ref.watch(locationNameProvider);
-                          }
-                          final distance =
-                              ref.watch(locationDistanceProvider).toInt();
+                ref.watch(locationDetailProvider).when(
+                      data: (locationDetail) {
+                        if (locationDetail.status ==
+                            LocationStatus.withinRange) {
+                          final name = locationDetail.name;
+                          final distance = locationDetail.distance.toInt();
                           return _statusRow(
                             icon: Icons.gps_fixed,
                             color: morningBlue,
                             text: "チェックインエリア圏内です",
-                            detail: "${place} から${distance}m",
+                            detail: "$name から${distance}m",
                           );
-                        } else if (locationStatus ==
+                        } else if (locationDetail.status ==
                             LocationStatus.outOfRange) {
                           return _statusRow(
                             icon: Icons.gps_off,
                             color: morningPink,
                             text: "チェックインエリア圏外です",
                           );
-                        } else if (locationStatus ==
+                        } else if (locationDetail.status ==
                             LocationStatus.notAvailable) {
                           return _statusRow(
                             icon: Icons.location_disabled_rounded,
                             color: morningPink,
                             text: "位置情報を取得できませんでした",
                           );
-                        } else if (locationStatus == LocationStatus.mocking) {
+                        } else if (locationDetail.status ==
+                            LocationStatus.mocking) {
                           return _statusRow(
                             icon: Icons.location_disabled_rounded,
                             color: morningPink,
@@ -583,9 +581,9 @@ class _HomePageState extends ConsumerState<HomePage>
               return Container();
             },
           ),
-          FutureBuilder<Position>(
+          FutureBuilder<Position?>(
             future: getCurrentPosition(),
-            builder: (BuildContext context, AsyncSnapshot<Position> snapshot) {
+            builder: (BuildContext context, AsyncSnapshot<Position?> snapshot) {
               if (snapshot.hasData) {
                 return Text(
                   "${snapshot.data!.latitude}, ${snapshot.data!.longitude}",

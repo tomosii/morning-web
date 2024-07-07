@@ -13,44 +13,42 @@ import '../utils/location.dart';
 import 'checkin_exception.dart';
 import 'checkin_status.dart';
 
-Future<NetworkStatus> checkNetworkStatus(
-  Ref ref,
+Future<NetworkDetail> getNetworkDetail(
+  String currentIpAdress,
   List<CheckInPlace> checkInPlaces,
 ) async {
-  final myIPAdress = await getIPAddress();
-
-  print("現在のIPアドレス: $myIPAdress");
-
   // チェックイン場所のIPアドレスと比較
   for (final place in checkInPlaces) {
     for (final ip in place.ipAddresses) {
-      if (myIPAdress.contains(ip)) {
+      if (currentIpAdress.contains(ip)) {
         print("一致したIPアドレス: $ip (${place.name})");
         final currentPlace = place;
-        ref.read(networkDestinationProvider.notifier).state = currentPlace.name;
-        return NetworkStatus.valid;
+        return NetworkDetail(
+          ipAddress: currentIpAdress,
+          name: currentPlace.name,
+          status: NetworkStatus.valid,
+        );
       }
     }
   }
-
   print("一致するIPアドレス なし");
-  return NetworkStatus.invalid;
+  return NetworkDetail(
+    ipAddress: currentIpAdress,
+    name: "",
+    status: NetworkStatus.invalid,
+  );
 }
 
-Future<LocationStatus> checkLocationStatus(
-  Ref ref,
+Future<LocationDetail> getLocationDetail(
+  Position? currentPosition,
   List<CheckInPlace> checkInplaces,
 ) async {
-  Position currentPosition;
-  try {
-    currentPosition = await getCurrentPosition();
-  } catch (e) {
-    return LocationStatus.notAvailable;
-  }
-
-  if (currentPosition.isMocked) {
-    // モック位置情報の場合
-    return LocationStatus.mocking;
+  if (currentPosition == null) {
+    return LocationDetail(
+      distance: 0,
+      name: "",
+      status: LocationStatus.notAvailable,
+    );
   }
 
   // 現在地から各場所までの距離を計算
@@ -72,14 +70,19 @@ Future<LocationStatus> checkLocationStatus(
 
   print("最短距離: $minDistance (${minDistancePlace.name})");
 
-  ref.read(locationDistanceProvider.notifier).state = minDistance;
-  ref.read(locationNameProvider.notifier).state = minDistancePlace.name;
+  late LocationStatus status;
 
   if (minDistance > 30) {
-    return LocationStatus.outOfRange;
+    status = LocationStatus.outOfRange;
   } else {
-    return LocationStatus.withinRange;
+    status = LocationStatus.withinRange;
   }
+
+  return LocationDetail(
+    distance: minDistance,
+    name: minDistancePlace.name,
+    status: status,
+  );
 }
 
 Future<void> checkIn(BuildContext context, WidgetRef ref) async {
@@ -113,8 +116,8 @@ Future<void> checkIn(BuildContext context, WidgetRef ref) async {
     final result = await CheckInRepository().post(
       email,
       ipAddress,
-      currentPosition.latitude,
-      currentPosition.longitude,
+      currentPosition!.latitude,
+      currentPosition!.longitude,
     );
     print("Check-in result: $result");
 

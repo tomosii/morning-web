@@ -4,10 +4,13 @@ import 'package:morning_web/repository/checkin.dart';
 import 'package:morning_web/repository/firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:geolocator/geolocator.dart';
 
 import '../models/place.dart';
 import '../checkin/checkin_verification.dart';
 import '../checkin/checkin_status.dart';
+import '../utils/ip_address.dart';
+import '../utils/location.dart';
 
 final userEmailProvider = StateProvider<String?>((ref) => null);
 final userNicknameProvider = StateProvider<String?>((ref) => null);
@@ -43,26 +46,41 @@ final checkInPlacesProvider =
   }
 });
 
-final networkStatusProvider =
-    FutureProvider.autoDispose<NetworkStatus>((ref) async {
-  final checkInPlaces = await ref.watch(checkInPlacesProvider.future);
-  NetworkStatus status = await checkNetworkStatus(ref, checkInPlaces);
-  return status;
+final currentIpAddressProvider = FutureProvider<String>((ref) async {
+  return getIPAddress();
 });
 
-final locationStatusProvider =
-    FutureProvider.autoDispose<LocationStatus>((ref) async {
+final currentPositionProvider = FutureProvider<Position?>((ref) async {
+  return getCurrentPosition();
+});
+
+final networkDetailProvider =
+    FutureProvider.autoDispose<NetworkDetail>((ref) async {
   final checkInPlaces = await ref.watch(checkInPlacesProvider.future);
-  return checkLocationStatus(ref, checkInPlaces);
+  final currentIpAddress = await ref.watch(currentIpAddressProvider.future);
+
+  NetworkDetail detail =
+      await getNetworkDetail(currentIpAddress, checkInPlaces);
+  return detail;
+});
+
+final locationDetailProvider =
+    FutureProvider.autoDispose<LocationDetail>((ref) async {
+  final checkInPlaces = await ref.watch(checkInPlacesProvider.future);
+  final currentPosition = await ref.watch(currentPositionProvider.future);
+
+  LocationDetail detail =
+      await getLocationDetail(currentPosition, checkInPlaces);
+  return detail;
 });
 
 final isCheckInAvailableProvider =
     FutureProvider.autoDispose<bool>((ref) async {
-  final networkStatus = await ref.watch(networkStatusProvider.future);
-  final locationStatus = await ref.watch(locationStatusProvider.future);
+  final networkDetail = await ref.watch(networkDetailProvider.future);
+  final locationDetail = await ref.watch(locationDetailProvider.future);
 
-  if (networkStatus == NetworkStatus.valid &&
-      locationStatus == LocationStatus.withinRange) {
+  if (networkDetail.status == NetworkStatus.valid &&
+      locationDetail.status == LocationStatus.withinRange) {
     ref.read(checkInButtonRippleOpacityProvider.notifier).state = 1.0;
     return true;
   } else {
@@ -81,18 +99,6 @@ final checkInRepositoryProvider = Provider<CheckInRepository>((ref) {
 
 final checkInResultProvider = StateProvider<CheckInResult>((ref) {
   return CheckInResult();
-});
-
-final networkDestinationProvider = StateProvider<String>((ref) {
-  return "";
-});
-
-final locationDistanceProvider = StateProvider<double>((ref) {
-  return 0.0;
-});
-
-final locationNameProvider = StateProvider<String>((ref) {
-  return "";
 });
 
 final checkInProcessStatusProvider = StateProvider<CheckInProcessStatus>((ref) {
