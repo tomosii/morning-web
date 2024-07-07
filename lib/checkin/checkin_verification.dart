@@ -86,10 +86,18 @@ Future<LocationDetail> getLocationDetail(
 }
 
 Future<void> checkIn(BuildContext context, WidgetRef ref) async {
-  print("チェックイン処理を開始");
+  print("Start check-in process...");
+
   final email = ref.read(userEmailProvider)!;
-  final ipAddress = await getIPAddress();
-  final currentPosition = await getCurrentPosition();
+  print("Get email from provider: $email");
+
+  final ipAddress = await ref.read(currentIpAddressProvider.future);
+  print("Get IP address from provider: $ipAddress");
+
+  final currentPosition = await ref.read(currentPositionProvider.future);
+  print("Get current position from provider: $currentPosition");
+
+  await Future.delayed(const Duration(milliseconds: 1000));
 
   // ref.read(checkInProcessStatusProvider.notifier).state =
   //     CheckInProcessStatus.fetchingNetwork;
