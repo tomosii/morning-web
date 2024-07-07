@@ -97,7 +97,7 @@ Future<void> checkIn(BuildContext context, WidgetRef ref) async {
   final currentPosition = await ref.read(currentPositionProvider.future);
   print("Get current position from provider: $currentPosition");
 
-  await Future.delayed(const Duration(milliseconds: 1000));
+  await Future.delayed(const Duration(milliseconds: 1500));
 
   // ref.read(checkInProcessStatusProvider.notifier).state =
   //     CheckInProcessStatus.fetchingNetwork;
@@ -139,8 +139,9 @@ Future<void> checkIn(BuildContext context, WidgetRef ref) async {
       (_) => false,
     );
   } on Exception catch (error) {
-    // 場所を再取得することで、ステータスを再評価 -> 画面更新
-    ref.invalidate(checkInPlacesProvider);
+    // 再取得
+    ref.invalidate(currentIpAddressProvider);
+    ref.invalidate(currentPositionProvider);
 
     await showDialog(
       context: context,

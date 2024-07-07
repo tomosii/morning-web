@@ -120,8 +120,9 @@ class _HomePageState extends ConsumerState<HomePage>
               ),
               child: RefreshIndicator(
                 onRefresh: () async {
-                  // 場所を再取得することで、ステータスを再評価 -> 画面更新
-                  ref.invalidate(checkInPlacesProvider);
+                  // 再取得
+                  ref.invalidate(currentIpAddressProvider);
+                  ref.invalidate(currentPositionProvider);
                   await Future.delayed(const Duration(milliseconds: 500));
                 },
                 child: SingleChildScrollView(

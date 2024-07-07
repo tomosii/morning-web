@@ -156,7 +156,7 @@ class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   AnimatedOpacity(
-                    duration: const Duration(milliseconds: 800),
+                    duration: const Duration(milliseconds: 600),
                     opacity: _titleOpacity,
                     child: const Text(
                       "チェックインしています",
@@ -171,7 +171,7 @@ class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage> {
                     height: 70,
                   ),
                   AnimatedOpacity(
-                    duration: const Duration(milliseconds: 800),
+                    duration: const Duration(milliseconds: 600),
                     opacity: _titleOpacity,
                     child: LoadingAnimationWidget.fourRotatingDots(
                       color: Colors.white,
