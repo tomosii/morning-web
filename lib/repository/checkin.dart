@@ -5,7 +5,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:morning_web/checkin/checkin_exception.dart';
 
 class CheckInRepository {
-  final String _baseUrl = "https://slack-morning-bot.vercel.app";
+  // final String _baseUrl = "https://slack-morning-bot.vercel.app";
+  final String _baseUrl =
+      "https://slack-morning-c7eu3rxn5-tomoshis-projects.vercel.app";
   // final String _baseUrl = "http://127.0.0.1:8000";
 
   final String _apiKey = dotenv.env["MORNING_API_KEY"]!;
@@ -33,22 +35,22 @@ class CheckInRepository {
 
     if (response.statusCode != 200) {
       print("チェックインに失敗: ${response.statusCode}, ${response.body}");
-      final detail = jsonDecode(response.body)["detail"];
-      switch (detail) {
-        case "User not found.":
+      final Map detail = jsonDecode(response.body)["detail"];
+      switch (detail["code"] as int) {
+        case 1001:
           throw UserNotFoundException();
-        case "User doesn't have a commitment today.":
+        case 1002:
           throw NotCommittedException();
-        case "Already checked in today.":
-          throw AlreadyCheckedInException();
-        case "IP address not matched with any place.":
-          throw InvalidIpAddressException();
-        case "Out of range of the check-in area.":
-          throw InvalidPlaceException();
-        case "Check-in is not available at this hour.":
+        case 1003:
           throw OutOfHoursException();
+        case 2001:
+          throw AlreadyCheckedInException();
+        case 2002:
+          throw InvalidIpAddressException();
+        case 2003:
+          throw InvalidPlaceException();
         default:
-          throw CheckInException(detail);
+          throw CheckInException(response.body);
       }
     }
 

@@ -200,7 +200,7 @@ class _HomePageState extends ConsumerState<HomePage>
               horizontal: 9,
               vertical: 5,
             ),
-            margin: const EdgeInsets.only(bottom: 7),
+            margin: const EdgeInsets.only(bottom: 8),
             child: Text(
               appVersion.when(
                 data: (version) => version,

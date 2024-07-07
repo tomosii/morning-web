@@ -131,7 +131,7 @@ Future<void> checkIn(BuildContext context, WidgetRef ref) async {
     await showDialog(
       context: context,
       builder: (_) {
-        switch (error.runtimeType) {
+        switch (error) {
           case UserNotFoundException _:
             return const MorningErrorDialog(
               title: "チェックインに失敗しました",
@@ -165,7 +165,7 @@ Future<void> checkIn(BuildContext context, WidgetRef ref) async {
           default:
             return MorningErrorDialog(
               title: "チェックインに失敗しました",
-              message: error.toString(),
+              message: "不明なエラーが発生しました。 (${error.toString()})",
             );
         }
       },
