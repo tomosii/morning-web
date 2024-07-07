@@ -622,14 +622,14 @@ class _HomePageState extends ConsumerState<HomePage>
 
     _rippleTransitionAnimController.forward();
 
-    await Future.delayed(const Duration(milliseconds: 700));
+    await Future.delayed(const Duration(milliseconds: 600));
 
     checkIn(context, ref);
 
     // Use FadeTransitionn
     Navigator.of(context).push(
       PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 500),
+        transitionDuration: const Duration(milliseconds: 300),
         pageBuilder: (BuildContext context, animation, secondaryAnimation) {
           return FadeTransition(
             opacity: animation,

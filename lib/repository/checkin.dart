@@ -5,9 +5,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:morning_web/checkin/checkin_exception.dart';
 
 class CheckInRepository {
-  // final String _baseUrl = "https://slack-morning-bot.vercel.app";
-  final String _baseUrl =
-      "https://slack-morning-c7eu3rxn5-tomoshis-projects.vercel.app";
+  final String _baseUrl = "https://slack-morning-bot.vercel.app";
+  // final String _baseUrl =
+  //     "https://slack-morning-c7eu3rxn5-tomoshis-projects.vercel.app";
   // final String _baseUrl = "http://127.0.0.1:8000";
 
   final String _apiKey = dotenv.env["MORNING_API_KEY"]!;

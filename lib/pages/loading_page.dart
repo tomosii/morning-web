@@ -1,14 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+
 import 'package:morning_web/checkin/checkin_status.dart';
 import 'package:morning_web/providers/providers.dart';
-
 import '../../constants/colors.dart';
 
 class CheckInLoadingPage extends ConsumerStatefulWidget {
-  const CheckInLoadingPage({Key? key}) : super(key: key);
+  const CheckInLoadingPage({super.key});
 
   @override
   ConsumerState<CheckInLoadingPage> createState() => _CheckInLoadingPageState();
@@ -16,6 +18,8 @@ class CheckInLoadingPage extends ConsumerStatefulWidget {
 
 class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage> {
   late final Timer _timer;
+
+  double _titleOpacity = 0;
 
   LinearGradient _bgGradient = const LinearGradient(
     colors: [
@@ -104,9 +108,15 @@ class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage> {
       });
     });
 
-    _timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+    _timer = Timer.periodic(const Duration(milliseconds: 400), (timer) {
       setState(() {
         _bgGradient = _gradients[timer.tick % _gradients.length];
+      });
+    });
+
+    Future.delayed(const Duration(milliseconds: 500), () {
+      setState(() {
+        _titleOpacity = 1;
       });
     });
   }
@@ -129,9 +139,9 @@ class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage> {
           gradient: _bgGradient,
         ),
         child: Center(
-          heightFactor: 1.0,
+          // heightFactor: 1.0,
           child: Container(
-            alignment: Alignment.topCenter,
+            // alignment: Alignment.topCenter,
             constraints: const BoxConstraints(
               maxWidth: 400,
             ),
@@ -139,54 +149,78 @@ class _CheckInLoadingPageState extends ConsumerState<CheckInLoadingPage> {
               horizontal: 28,
             ),
             child: Container(
-              margin: const EdgeInsets.only(top: 120),
-              height: 200,
+              // margin: const EdgeInsets.only(top: 120),
+              // height: 200,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _statusRow(
-                    text: "IPアドレスを取得中...",
-                    loading: status.index >=
-                        CheckInProcessStatus.fetchingNetwork.index,
-                    done: status.index >
-                        CheckInProcessStatus.fetchingNetwork.index,
-                    // completeWidget: Transform.rotate(
-                    //   angle: -0.2,
-                    //   child: Image.asset(
-                    //     "assets/images/christmas-ball1.png",
-                    //     width: 24,
-                    //   ),
-                    // ),
+                  AnimatedOpacity(
+                    duration: const Duration(milliseconds: 700),
+                    opacity: _titleOpacity,
+                    child: const Text(
+                      "チェックインしています",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
                   ),
-                  _statusRow(
-                    text: "現在地を取得中...",
-                    loading: status.index >=
-                        CheckInProcessStatus.fetchingLocation.index,
-                    done: status.index >
-                        CheckInProcessStatus.fetchingLocation.index,
-                    // completeWidget: Transform.rotate(
-                    //   angle: 0.5,
-                    //   child: Image.asset(
-                    //     "assets/images/christmas-ball2.png",
-                    //     width: 24,
-                    //   ),
-                    // ),
+                  const SizedBox(
+                    height: 70,
                   ),
-                  _statusRow(
-                    text: "サーバーと通信中...",
-                    loading: status.index >=
-                        CheckInProcessStatus.connectingToServer.index,
-                    done: status.index >
-                        CheckInProcessStatus.connectingToServer.index,
-                    // completeWidget: Transform.rotate(
-                    //   angle: -0.1,
-                    //   child: Image.asset(
-                    //     "assets/images/christmas-ball3.png",
-                    //     width: 24,
-                    //   ),
-                    // ),
+                  AnimatedOpacity(
+                    duration: const Duration(milliseconds: 700),
+                    opacity: _titleOpacity,
+                    child: LoadingAnimationWidget.fourRotatingDots(
+                      color: Colors.white,
+                      size: 55,
+                    ),
                   ),
+                  // _statusRow(
+                  //   text: "IPアドレスを取得中...",
+                  //   loading: status.index >=
+                  //       CheckInProcessStatus.fetchingNetwork.index,
+                  //   done: status.index >
+                  //       CheckInProcessStatus.fetchingNetwork.index,
+                  //   // completeWidget: Transform.rotate(
+                  //   //   angle: -0.2,
+                  //   //   child: Image.asset(
+                  //   //     "assets/images/christmas-ball1.png",
+                  //   //     width: 24,
+                  //   //   ),
+                  //   // ),
+                  // ),
+                  // _statusRow(
+                  //   text: "現在地を取得中...",
+                  //   loading: status.index >=
+                  //       CheckInProcessStatus.fetchingLocation.index,
+                  //   done: status.index >
+                  //       CheckInProcessStatus.fetchingLocation.index,
+                  //   // completeWidget: Transform.rotate(
+                  //   //   angle: 0.5,
+                  //   //   child: Image.asset(
+                  //   //     "assets/images/christmas-ball2.png",
+                  //   //     width: 24,
+                  //   //   ),
+                  //   // ),
+                  // ),
+                  // _statusRow(
+                  //   text: "サーバーと通信中...",
+                  //   loading: status.index >=
+                  //       CheckInProcessStatus.connectingToServer.index,
+                  //   done: status.index >
+                  //       CheckInProcessStatus.connectingToServer.index,
+                  //   // completeWidget: Transform.rotate(
+                  //   //   angle: -0.1,
+                  //   //   child: Image.asset(
+                  //   //     "assets/images/christmas-ball3.png",
+                  //   //     width: 24,
+                  //   //   ),
+                  //   // ),
+                  // ),
                 ],
               ),
             ),
