@@ -8,6 +8,7 @@ import 'package:morning_web/providers/providers.dart';
 import 'package:morning_web/utils/ip_address.dart';
 
 import '../components/error_dialog.dart';
+import '../providers/week_status_providers.dart';
 import '../repository/checkin.dart';
 import '../utils/location.dart';
 import 'checkin_exception.dart';
@@ -133,6 +134,9 @@ Future<void> checkIn(BuildContext context, WidgetRef ref) async {
     ref.read(checkInProcessStatusProvider.notifier).state =
         CheckInProcessStatus.done;
 
+    ref.invalidate(thisWeekCommitmentsProvider);
+    ref.invalidate(thisWeekAttendancesProvider);
+
     Navigator.pushNamedAndRemoveUntil(
       context,
       "/result",
@@ -142,6 +146,8 @@ Future<void> checkIn(BuildContext context, WidgetRef ref) async {
     // 再取得
     ref.invalidate(currentIpAddressProvider);
     ref.invalidate(currentPositionProvider);
+    ref.invalidate(thisWeekCommitmentsProvider);
+    ref.invalidate(thisWeekAttendancesProvider);
 
     await showDialog(
       context: context,

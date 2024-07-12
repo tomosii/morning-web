@@ -32,8 +32,6 @@ class CommitmentRepository {
       }
     });
 
-    debugPrint("Get ${commitments.length} commitments on $dateString");
-
     return commitments;
   }
 

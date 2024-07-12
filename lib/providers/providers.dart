@@ -104,10 +104,6 @@ final checkInButtonRippleOpacityProvider = StateProvider<double>((ref) {
   return 0.0;
 });
 
-final checkInRepositoryProvider = Provider<CheckInRepository>((ref) {
-  return CheckInRepository();
-});
-
 final checkInResultProvider = StateProvider<CheckInResult>((ref) {
   return CheckInResult();
 });

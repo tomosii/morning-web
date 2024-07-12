@@ -9,11 +9,11 @@ class DateStatusIndicator extends StatelessWidget {
   final int? point;
 
   const DateStatusIndicator({
-    Key? key,
+    super.key,
     required this.date,
     this.enabled = true,
     this.point,
-  }) : super(key: key);
+  });
 
   Color get bgColor {
     if (!enabled) {
@@ -79,7 +79,7 @@ class DateStatusIndicator extends StatelessWidget {
           child: Icon(
         Icons.check_rounded,
         color: Colors.white,
-        size: 24,
+        size: 26,
       ));
     } else {
       return Center(

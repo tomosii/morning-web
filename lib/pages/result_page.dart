@@ -10,9 +10,10 @@ import 'package:morning_web/providers/providers.dart';
 import 'package:sprung/sprung.dart';
 
 import '../../constants/colors.dart';
+import '../providers/week_status_providers.dart';
 
 class CheckInResultPage extends ConsumerStatefulWidget {
-  const CheckInResultPage({Key? key}) : super(key: key);
+  const CheckInResultPage({super.key});
 
   @override
   ConsumerState<CheckInResultPage> createState() => _CheckInResultPageState();

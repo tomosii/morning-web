@@ -126,7 +126,9 @@ class _HomePageState extends ConsumerState<HomePage>
                   // 再取得
                   ref.invalidate(currentIpAddressProvider);
                   ref.invalidate(currentPositionProvider);
-                  await Future.delayed(const Duration(milliseconds: 500));
+                  ref.invalidate(thisWeekCommitmentsProvider);
+                  ref.invalidate(thisWeekAttendancesProvider);
+                  await Future.delayed(const Duration(milliseconds: 700));
                 },
                 child: SingleChildScrollView(
                   clipBehavior: Clip.none,
@@ -148,7 +150,7 @@ class _HomePageState extends ConsumerState<HomePage>
                         ),
                         _logo(),
                         const SizedBox(
-                          height: 10,
+                          height: 12,
                         ),
                         _currentDateAndTime(),
                         const SizedBox(
@@ -679,7 +681,7 @@ class _HomePageState extends ConsumerState<HomePage>
                         return DateStatusIndicator(
                           date: status.date,
                           enabled: status.enabled,
-                          // point: status.point,
+                          point: status.point,
                         );
                       }).toList(),
                     ),
@@ -690,27 +692,32 @@ class _HomePageState extends ConsumerState<HomePage>
                 );
               },
               loading: () {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: List.generate(5, (index) {
-                    return DateStatusIndicator(
-                      date: DateTime.now(),
-                      enabled: false,
-                    );
-                  }),
+                return Column(
+                  children: [
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: List.generate(5, (index) {
+                        return DateStatusIndicator(
+                          date: DateTime.now(),
+                          enabled: false,
+                        );
+                      }),
+                    ),
+                  ],
                 );
               },
               error: (error, stackTrace) {
-                return Row(
-                  children: [
-                    Text(
-                      "エラー: $error",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.black.withOpacity(0.4),
-                      ),
+                return Center(
+                  child: Text(
+                    "エラーが発生しました。",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.black.withOpacity(0.4),
                     ),
-                  ],
+                  ),
                 );
               },
             ),
