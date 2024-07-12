@@ -211,13 +211,18 @@ class _CheckInResultPageState extends ConsumerState<CheckInResultPage>
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          "${ref.watch(userNicknameProvider)}さん、おはようございます。",
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.black.withOpacity(0.8)),
-                        ),
+                        ref.watch(userProvider).maybeWhen(
+                              data: (user) {
+                                return Text(
+                                  "${user!.nickname}さん、おはようございます。",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w900,
+                                      color: Colors.black.withOpacity(0.8)),
+                                );
+                              },
+                              orElse: () => const SizedBox(),
+                            ),
                         const SizedBox(
                           height: 10,
                         ),

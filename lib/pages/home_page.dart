@@ -8,6 +8,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:morning_web/checkin/checkin_verification.dart';
 import 'package:morning_web/pages/loading_page.dart';
 import 'package:morning_web/providers/providers.dart';
+import 'package:morning_web/providers/week_status_providers.dart';
+import 'package:morning_web/repository/commitment.dart';
 import 'package:morning_web/utils/ip_address.dart';
 import 'package:morning_web/utils/location.dart';
 import 'package:morning_web/checkin/checkin_status.dart';
@@ -15,6 +17,7 @@ import 'package:morning_web/utils/screen_size.dart';
 import 'package:sprung/sprung.dart';
 
 import '../../constants/colors.dart';
+import '../components/date_status.dart';
 import '../components/ripple_animation.dart';
 import '../utils/date.dart';
 
@@ -62,14 +65,14 @@ class _HomePageState extends ConsumerState<HomePage>
       ),
     );
 
-    Future.delayed(const Duration(milliseconds: 300), () {
+    Future.delayed(const Duration(milliseconds: 500), () {
       setState(() {
         _headerOpacity = 1;
         _bgOpacity = 0.4;
       });
     });
 
-    Future.delayed(const Duration(milliseconds: 700), () {
+    Future.delayed(const Duration(milliseconds: 1000), () {
       setState(() {
         _statusOpacity = 1;
         _statusPanelScale = 1;
@@ -100,19 +103,19 @@ class _HomePageState extends ConsumerState<HomePage>
           clipBehavior: Clip.none,
           alignment: Alignment.topCenter,
           children: [
-            Positioned(
-              right: -150,
-              top: -120,
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 1000),
-                opacity: _bgOpacity,
-                child: Image.asset(
-                  "assets/images/yellow-circle.png",
-                  width: 280,
-                  height: 280,
-                ),
-              ),
-            ),
+            // Positioned(
+            //   right: -150,
+            //   top: -120,
+            //   child: AnimatedOpacity(
+            //     duration: const Duration(milliseconds: 1000),
+            //     opacity: _bgOpacity,
+            //     child: Image.asset(
+            //       "assets/images/yellow-circle.png",
+            //       width: 280,
+            //       height: 280,
+            //     ),
+            //   ),
+            // ),
             BackdropFilter(
               filter: ImageFilter.blur(
                 sigmaX: 24,
@@ -135,23 +138,27 @@ class _HomePageState extends ConsumerState<HomePage>
                       maxWidth: 400,
                     ),
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 28,
+                      horizontal: 24,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(
-                          height: 20,
+                          height: 10,
                         ),
                         _logo(),
                         const SizedBox(
-                          height: 20,
+                          height: 10,
                         ),
                         _currentDateAndTime(),
                         const SizedBox(
-                          height: 40,
+                          height: 25,
                         ),
-                        _statusPanel(),
+                        _checkInStatusPanel(),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        _thisWeekStatusPanel(),
                         const SizedBox(
                           height: 100,
                         ),
@@ -235,23 +242,23 @@ class _HomePageState extends ConsumerState<HomePage>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "${now.year}年${now.month}月${now.day}日 (${getJPTodayDayOfWeek()})",
+                  "${now.year}年${now.month}月${now.day}日 (${getJPDayOfWeekString(now.weekday)})",
                   style: TextStyle(
                     fontFamily: "Inter",
-                    fontSize: 15,
+                    fontSize: 14,
                     fontWeight: FontWeight.w500,
                     color: Colors.black.withOpacity(0.4),
-                    letterSpacing: 1.2,
+                    letterSpacing: 1.1,
                   ),
                 ),
                 const SizedBox(
-                  height: 1,
+                  height: 2,
                 ),
                 Text(
                   "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}",
                   style: TextStyle(
                     fontFamily: "Inter",
-                    fontSize: 34,
+                    fontSize: 32,
                     fontWeight: FontWeight.w700,
                     color: Colors.black.withOpacity(0.7),
                   ),
@@ -268,13 +275,13 @@ class _HomePageState extends ConsumerState<HomePage>
     );
   }
 
-  Widget _statusPanel() {
+  Widget _checkInStatusPanel() {
     return AnimatedScale(
-      duration: const Duration(milliseconds: 3500),
+      duration: const Duration(milliseconds: 1700),
       scale: _statusPanelScale,
       curve: Sprung.overDamped,
       child: AnimatedOpacity(
-        duration: const Duration(milliseconds: 1400),
+        duration: const Duration(milliseconds: 800),
         opacity: _statusOpacity,
         child: Center(
           child: Container(
@@ -286,46 +293,46 @@ class _HomePageState extends ConsumerState<HomePage>
                   color: Colors.black.withOpacity(0.08),
                   blurRadius: 35,
                   offset: const Offset(0, 0),
-                  spreadRadius: 2,
+                  spreadRadius: 1,
                 ),
               ],
             ),
             padding: const EdgeInsets.symmetric(
               horizontal: 24,
-              vertical: 24,
+              vertical: 20,
             ),
             child: Column(
               children: [
                 ref.watch(networkDetailProvider).when(
                       data: (networkDetail) {
                         if (networkDetail.status == NetworkStatus.valid) {
-                          return _statusRow(
+                          return _checkInStatusRow(
                             icon: Icons.wifi_rounded,
                             color: morningBlue,
                             text: "指定のネットワークに接続されています",
                             detail: networkDetail.name,
                           );
                         } else {
-                          return _statusRow(
+                          return _checkInStatusRow(
                             icon: Icons.wifi_off_rounded,
                             color: morningPink,
                             text: "指定のネットワークに接続されていません",
                           );
                         }
                       },
-                      loading: () => _statusRow(
+                      loading: () => _checkInStatusRow(
                         icon: Icons.wifi,
                         color: Colors.black.withOpacity(0.2),
                         text: "ネットワーク情報を取得中...",
                       ),
-                      error: (error, stackTrace) => _statusRow(
+                      error: (error, stackTrace) => _checkInStatusRow(
                         icon: Icons.wifi_off_rounded,
                         color: morningPink,
                         text: "ネットワーク情報を取得できませんでした",
                       ),
                     ),
                 const SizedBox(
-                  height: 14,
+                  height: 12,
                 ),
                 ref.watch(locationDetailProvider).when(
                       data: (locationDetail) {
@@ -333,7 +340,7 @@ class _HomePageState extends ConsumerState<HomePage>
                             LocationStatus.withinRange) {
                           final name = locationDetail.name;
                           final distance = locationDetail.distance.toInt();
-                          return _statusRow(
+                          return _checkInStatusRow(
                             icon: Icons.gps_fixed,
                             color: morningBlue,
                             text: "チェックインエリア圏内です",
@@ -341,39 +348,39 @@ class _HomePageState extends ConsumerState<HomePage>
                           );
                         } else if (locationDetail.status ==
                             LocationStatus.outOfRange) {
-                          return _statusRow(
+                          return _checkInStatusRow(
                             icon: Icons.gps_off,
                             color: morningPink,
                             text: "チェックインエリア圏外です",
                           );
                         } else if (locationDetail.status ==
                             LocationStatus.notAvailable) {
-                          return _statusRow(
+                          return _checkInStatusRow(
                             icon: Icons.location_disabled_rounded,
                             color: morningPink,
                             text: "位置情報を取得できませんでした",
                           );
                         } else if (locationDetail.status ==
                             LocationStatus.mocking) {
-                          return _statusRow(
+                          return _checkInStatusRow(
                             icon: Icons.location_disabled_rounded,
                             color: morningPink,
                             text: "位置情報が偽装されています",
                           );
                         } else {
-                          return _statusRow(
+                          return _checkInStatusRow(
                             icon: Icons.location_disabled_rounded,
                             color: morningPink,
                             text: "位置情報を取得できませんでした",
                           );
                         }
                       },
-                      loading: () => _statusRow(
+                      loading: () => _checkInStatusRow(
                         icon: Icons.gps_not_fixed,
                         color: Colors.black.withOpacity(0.2),
                         text: "位置情報を取得中...",
                       ),
-                      error: (error, stackTrace) => _statusRow(
+                      error: (error, stackTrace) => _checkInStatusRow(
                         icon: Icons.location_disabled_rounded,
                         color: morningPink,
                         text: "位置情報を取得できませんでした",
@@ -387,7 +394,7 @@ class _HomePageState extends ConsumerState<HomePage>
     );
   }
 
-  Widget _statusRow({
+  Widget _checkInStatusRow({
     required IconData icon,
     required Color color,
     required String text,
@@ -397,6 +404,7 @@ class _HomePageState extends ConsumerState<HomePage>
       children: [
         Icon(
           icon,
+          size: 21,
           color: color,
         ),
         const SizedBox(
@@ -610,6 +618,108 @@ class _HomePageState extends ConsumerState<HomePage>
     );
   }
 
+  Widget _thisWeekStatusPanel() {
+    return AnimatedScale(
+      duration: const Duration(milliseconds: 1700),
+      scale: _statusPanelScale,
+      curve: Sprung.overDamped,
+      child: AnimatedOpacity(
+        duration: const Duration(milliseconds: 800),
+        opacity: _statusOpacity,
+        child: Center(
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: const BorderRadius.all(Radius.circular(14)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  blurRadius: 35,
+                  offset: const Offset(0, 0),
+                  spreadRadius: 1,
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 18,
+              vertical: 20,
+            ),
+            child: ref.watch(thisWeekStatusProvider).when(
+              data: (statusList) {
+                if (statusList == null) {
+                  return Center(
+                    child: Text(
+                      "朝活に参加していません。",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black.withOpacity(0.4),
+                      ),
+                    ),
+                  );
+                }
+                return Column(
+                  children: [
+                    Text(
+                      statusList.first.time!,
+                      style: TextStyle(
+                        fontFamily: "Inter",
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black.withOpacity(0.7),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: statusList.map((status) {
+                        return DateStatusIndicator(
+                          date: status.date,
+                          enabled: status.enabled,
+                          // point: status.point,
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(
+                      height: 3,
+                    ),
+                  ],
+                );
+              },
+              loading: () {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: List.generate(5, (index) {
+                    return DateStatusIndicator(
+                      date: DateTime.now(),
+                      enabled: false,
+                    );
+                  }),
+                );
+              },
+              error: (error, stackTrace) {
+                return Row(
+                  children: [
+                    Text(
+                      "エラー: $error",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.black.withOpacity(0.4),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<void> _startCheckInAndPush() async {
     setState(() {
       _checkInLoading = true;
@@ -617,7 +727,7 @@ class _HomePageState extends ConsumerState<HomePage>
     ref.read(checkInProcessStatusProvider.notifier).state =
         CheckInProcessStatus.notStarted;
 
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future.delayed(const Duration(milliseconds: 150));
 
     _rippleTransitionAnimController.forward();
 

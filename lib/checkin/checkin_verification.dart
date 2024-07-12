@@ -86,43 +86,43 @@ Future<LocationDetail> getLocationDetail(
 }
 
 Future<void> checkIn(BuildContext context, WidgetRef ref) async {
-  print("Start check-in process...");
-
-  final email = ref.read(userEmailProvider)!;
-  print("Get email from provider: $email");
-
-  final ipAddress = await ref.read(currentIpAddressProvider.future);
-  print("Get IP address from provider: $ipAddress");
-
-  final currentPosition = await ref.read(currentPositionProvider.future);
-  print("Get current position from provider: $currentPosition");
-
-  await Future.delayed(const Duration(milliseconds: 1500));
-
-  // ref.read(checkInProcessStatusProvider.notifier).state =
-  //     CheckInProcessStatus.fetchingNetwork;
-  // print("IPアドレスを取得中...");
-  // final ipAddress = await getIPAddress();
-
-  // await Future.delayed(const Duration(milliseconds: 900));
-
-  // ref.read(checkInProcessStatusProvider.notifier).state =
-  //     CheckInProcessStatus.fetchingLocation;
-  // print("位置情報を取得中...");
-  // final currentPosition = await getCurrentPosition();
-
-  // await Future.delayed(const Duration(milliseconds: 900));
-
-  // ref.read(checkInProcessStatusProvider.notifier).state =
-  //     CheckInProcessStatus.connectingToServer;
-  // print("サーバーと通信中...");
-
-  // await Future.delayed(const Duration(milliseconds: 900));
-
   try {
+    print("Start check-in process...");
+
+    final user = await ref.read(userProvider.future);
+    print("Get email from provider: ${user!.email}");
+
+    final ipAddress = await ref.read(currentIpAddressProvider.future);
+    print("Get IP address from provider: $ipAddress");
+
+    final currentPosition = await ref.read(currentPositionProvider.future);
+    print("Get current position from provider: $currentPosition");
+
+    await Future.delayed(const Duration(milliseconds: 900));
+
+    // ref.read(checkInProcessStatusProvider.notifier).state =
+    //     CheckInProcessStatus.fetchingNetwork;
+    // print("IPアドレスを取得中...");
+    // final ipAddress = await getIPAddress();
+
+    // await Future.delayed(const Duration(milliseconds: 900));
+
+    // ref.read(checkInProcessStatusProvider.notifier).state =
+    //     CheckInProcessStatus.fetchingLocation;
+    // print("位置情報を取得中...");
+    // final currentPosition = await getCurrentPosition();
+
+    // await Future.delayed(const Duration(milliseconds: 900));
+
+    // ref.read(checkInProcessStatusProvider.notifier).state =
+    //     CheckInProcessStatus.connectingToServer;
+    // print("サーバーと通信中...");
+
+    // await Future.delayed(const Duration(milliseconds: 900));
+
     print("Sending check-in request...");
     final result = await CheckInRepository().post(
-      email,
+      user.email,
       ipAddress,
       currentPosition!.latitude,
       currentPosition!.longitude,

@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../components/text_form.dart';
 import '../components/primary_button.dart';
 import '../providers/providers.dart';
+import '../repository/user.dart';
 import 'home_page.dart';
 
 class EmailPage extends ConsumerStatefulWidget {
@@ -100,15 +101,16 @@ class _EmailPageState extends ConsumerState<EmailPage> {
     if (email.isEmpty) {
       return;
     }
+    ref.read(userEmailProvider.notifier).state = email;
 
     setState(() {
       _loading = true;
     });
 
-    final userExists = await findUser(email);
+    final user = await ref.read(userProvider.future);
 
-    if (!userExists) {
-      // ユーザーが存在しない場合
+    // ユーザーが存在しない場合
+    if (user == null) {
       setState(() {
         _loading = false;
       });
@@ -125,32 +127,14 @@ class _EmailPageState extends ConsumerState<EmailPage> {
       return;
     }
 
+    // ローカルにメールアドレスを保存
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString("email", email);
+
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (context) => const HomePage(),
       ),
     );
-  }
-
-  Future<bool> findUser(String email) async {
-    final db = FirebaseFirestore.instance;
-
-    // try {
-
-    // 該当のメールアドレスを持つユーザーが存在するか確認
-    final snapshot = await db.collection("users").doc(email).get();
-
-    if (snapshot.exists) {
-      print("User exists: $email");
-      final data = snapshot.data();
-      ref.read(userEmailProvider.notifier).state = email;
-      ref.read(userNicknameProvider.notifier).state = data?["nickname"];
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString("email", email);
-      return true;
-    } else {
-      print("User not found: $email");
-      return false;
-    }
   }
 }

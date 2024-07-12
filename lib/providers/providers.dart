@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:morning_web/repository/checkin.dart';
-import 'package:morning_web/repository/firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:geolocator/geolocator.dart';
@@ -9,11 +7,25 @@ import 'package:geolocator/geolocator.dart';
 import '../models/place.dart';
 import '../checkin/checkin_verification.dart';
 import '../checkin/checkin_status.dart';
+import '../models/user.dart';
+import '../repository/checkin.dart';
+import '../repository/user.dart';
 import '../utils/ip_address.dart';
 import '../utils/location.dart';
 
-final userEmailProvider = StateProvider<String?>((ref) => null);
-final userNicknameProvider = StateProvider<String?>((ref) => null);
+final userEmailProvider = StateProvider<String?>((ref) {
+  return null;
+});
+
+final userProvider = FutureProvider<User?>((ref) async {
+  final email = ref.watch(userEmailProvider);
+  if (email != null) {
+    final userRepository = ref.watch(userRepositoryProvider);
+    final user = await userRepository.getUser(email);
+    return user;
+  }
+  return null;
+});
 
 final localEmailProvider = FutureProvider<String?>((ref) async {
   final prefs = await SharedPreferences.getInstance();
@@ -21,10 +33,9 @@ final localEmailProvider = FutureProvider<String?>((ref) async {
   print("Email in local storage: $email");
 
   if (email != null) {
-    fetchUserInfo(email, ref);
-
-    // SharedPreferenceに上書き
+    // SharedPreferenceに上書き（Webストレージの日時を更新）
     await prefs.setString("email", email);
+    ref.read(userEmailProvider.notifier).state = email;
   }
   return email;
 });
