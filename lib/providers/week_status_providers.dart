@@ -53,37 +53,62 @@ final thisWeekStatusProvider =
     }
 
     List<DateStatus> dateStatusList = [];
-    for (final weekday in weekdays) {
+    // 月〜金まで
+    for (var i = 1; i <= 5; i++) {
+      DateTime? currentDate;
+
+      // 開催日かどうかをチェック
+      bool isWeekday = false;
+      for (var weekday in weekdays) {
+        if (weekday.weekday == i) {
+          isWeekday = true;
+          currentDate = weekday;
+          break;
+        }
+      }
+      if (!isWeekday) {
+        // 開催日でない場合は空白を追加
+        dateStatusList.add(DateStatus(
+          date: DateTime(0),
+          isWeekday: false,
+        ));
+        continue;
+      }
+
+      // 参加日かどうかをチェック
       bool commitEnabled = false;
       int? pointChange;
       for (var commitDate in userCommitment.dates!) {
-        if (isSameDate(weekday, commitDate)) {
+        if (isSameDate(currentDate!, commitDate)) {
           commitEnabled = true;
           break;
         }
       }
 
+      // チェックイン結果がある場合はポイントを計算
       if (attendances != null) {
         for (final attendance in attendances) {
-          if (isSameDate(weekday, attendance.date!)) {
+          if (isSameDate(currentDate!, attendance.date!)) {
             pointChange = getPointChange(attendance.timeDifferenceSeconds!);
           }
         }
       }
 
       if (commitEnabled) {
+        // 参加日の場合
         dateStatusList.add(
           DateStatus(
-            date: weekday,
-            enabled: true,
+            date: currentDate!,
+            commitEnabled: true,
             time: userCommitment.time,
             point: pointChange,
           ),
         );
       } else {
+        // 参加日でない場合は空白を追加
         dateStatusList.add(DateStatus(
-          date: weekday,
-          enabled: false,
+          date: currentDate!,
+          commitEnabled: false,
         ));
       }
     }

@@ -2,25 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:morning_web/utils/date.dart';
 
 import '../constants/colors.dart';
+import '../models/date_status.dart';
 
 class DateStatusIndicator extends StatelessWidget {
-  final DateTime date;
-  final bool enabled;
-  final int? point;
+  final DateStatus status;
 
   const DateStatusIndicator({
     super.key,
-    required this.date,
-    this.enabled = true,
-    this.point,
+    required this.status,
   });
 
   Color get bgColor {
-    if (!enabled) {
+    if (!status.commitEnabled || !status.isWeekday) {
       return Colors.black.withOpacity(0.05);
-    } else if (point == null) {
+    } else if (status.point == null) {
       return morningBgBlue;
-    } else if (point! > 0) {
+    } else if (status.point! > 0) {
       return morningBlue;
     } else {
       return morningPink;
@@ -28,9 +25,9 @@ class DateStatusIndicator extends StatelessWidget {
   }
 
   Color get textColor {
-    if (!enabled) {
+    if (!status.commitEnabled || !status.isWeekday) {
       return Colors.black.withOpacity(0.2);
-    } else if (point == null) {
+    } else if (status.point == null) {
       return morningFgBlue;
     } else {
       return Colors.white;
@@ -38,9 +35,9 @@ class DateStatusIndicator extends StatelessWidget {
   }
 
   Widget get child {
-    if (!enabled) {
+    if (!status.commitEnabled || !status.isWeekday) {
       return Container();
-    } else if (point == null) {
+    } else if (status.point == null) {
       return Container(
         padding: const EdgeInsets.only(
           top: 6,
@@ -50,7 +47,7 @@ class DateStatusIndicator extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              getJPDayOfWeekString(date.weekday),
+              getJPDayOfWeekString(status.date.weekday),
               style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.w400,
@@ -62,7 +59,7 @@ class DateStatusIndicator extends StatelessWidget {
               height: 5,
             ),
             Text(
-              date.day.toString(),
+              status.date.day.toString(),
               style: TextStyle(
                 fontFamily: "Inter",
                 fontSize: 21,
@@ -74,17 +71,17 @@ class DateStatusIndicator extends StatelessWidget {
           ],
         ),
       );
-    } else if (point! > 0) {
+    } else if (status.point! > 0) {
       return const Center(
           child: Icon(
         Icons.check_rounded,
         color: Colors.white,
-        size: 26,
+        size: 27,
       ));
     } else {
       return Center(
         child: Text(
-          point.toString(),
+          status.point.toString(),
           style: TextStyle(
             fontFamily: "Inter",
             fontSize: 21,

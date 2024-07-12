@@ -19,6 +19,7 @@ import 'package:sprung/sprung.dart';
 import '../../constants/colors.dart';
 import '../components/date_status.dart';
 import '../components/ripple_animation.dart';
+import '../models/date_status.dart';
 import '../utils/date.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -679,9 +680,7 @@ class _HomePageState extends ConsumerState<HomePage>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: statusList.map((status) {
                         return DateStatusIndicator(
-                          date: status.date,
-                          enabled: status.enabled,
-                          point: status.point,
+                          status: status,
                         );
                       }).toList(),
                     ),
@@ -701,8 +700,10 @@ class _HomePageState extends ConsumerState<HomePage>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: List.generate(5, (index) {
                         return DateStatusIndicator(
-                          date: DateTime.now(),
-                          enabled: false,
+                          status: DateStatus(
+                            date: DateTime(0),
+                            commitEnabled: false,
+                          ),
                         );
                       }),
                     ),
