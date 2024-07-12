@@ -70,6 +70,7 @@ final thisWeekStatusProvider =
         // 開催日でない場合は空白を追加
         dateStatusList.add(DateStatus(
           date: DateTime(0),
+          time: userCommitment.time,
           isWeekday: false,
         ));
         continue;
@@ -108,6 +109,7 @@ final thisWeekStatusProvider =
         // 参加日でない場合は空白を追加
         dateStatusList.add(DateStatus(
           date: currentDate!,
+          time: userCommitment.time,
           commitEnabled: false,
         ));
       }

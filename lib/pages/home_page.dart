@@ -653,7 +653,7 @@ class _HomePageState extends ConsumerState<HomePage>
                 if (statusList == null) {
                   return Center(
                     child: Text(
-                      "朝活に参加していません。",
+                      "朝活に参加していません",
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
@@ -665,7 +665,7 @@ class _HomePageState extends ConsumerState<HomePage>
                 return Column(
                   children: [
                     Text(
-                      statusList.first.time!,
+                      statusList.first.time ?? "",
                       style: TextStyle(
                         fontFamily: "Inter",
                         fontSize: 22,
